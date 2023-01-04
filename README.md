@@ -25,8 +25,12 @@
 
 ## Steps (to be updated):
 - [x] Initialize Django Application and create a home page 
-- [ ] Set up some related models to our application 
-- [ ] Create our admin view and super user 
+- [x] Set up some related models to our application
+    - Biography
+    - Projects (details)
+    - Showcase Projects (walkthrough/sample?)
+    - Contact me
+- [x] Create our admin view and super user 
 - [ ] Start connecting our django app with Restapi 
 - [ ] Create API endpoints and fill them with fake data using Faker 
 - [ ] Test API endpoints using postman 
