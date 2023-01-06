@@ -15,8 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+from jdwebport_app.views import BiographyViewSet, ProjectViewSet, ContactMeViewSet
+
+# using default router urls
+router = routers.DefaultRouter()
+router.register('biography', BiographyViewSet)
+router.register('project', ProjectViewSet)
+router.register('contactme', ContactMeViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('jdwebport_app.urls')),
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls'))
 ]

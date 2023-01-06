@@ -6,14 +6,14 @@ from django.utils.text import slugify
 
 class Biography(models.Model):
     # Main bio description
-    bio_description = models.TextField(max_length=500, blank=False)
+    bio_description = models.TextField(max_length=500, blank=True, null=False)
     # Quick three words etc description
-    quick_description = models.CharField(max_length=100, blank=False)
+    quick_description = models.CharField(max_length=100, blank=True, null=False)
     bio_entry_date = models.DateTimeField(auto_now_add=True)
 
     # current project/activity
-    curr_proj_name = models.CharField(max_length=100)
-    curr_proj_description = models.TextField(max_length=500)
+    curr_proj_name = models.CharField(max_length=100, blank=True, null=False)
+    curr_proj_description = models.TextField(max_length=500, blank=True, null=False)
     curr_proj_entry_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
