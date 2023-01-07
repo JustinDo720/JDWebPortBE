@@ -3,17 +3,25 @@ from django.utils.text import slugify
 
 # Create your models here.
 
+"""
+Safely delete migrations rules:
+1) Make sure to makemigrations before this process and be sure that all fixes are in the migrations file
+2) Run "python manage.py migrate app_name zero" --> unapply all migrations 
+3) Remove pycache from /migrations/__pycache__/ (the pyc that correlates to the migrations you want to delete)
+4) Remove the python files from /migrations/ (the py that correlates to the migrations you want to delete)
+"""
+
 
 class Biography(models.Model):
     # Main bio description
-    bio_description = models.TextField(max_length=500, blank=True, null=False)
+    bio_description = models.TextField(max_length=500, blank=False)
     # Quick three words etc description
-    quick_description = models.CharField(max_length=100, blank=True, null=False)
+    quick_description = models.CharField(max_length=100)
     bio_entry_date = models.DateTimeField(auto_now_add=True)
 
     # current project/activity
-    curr_proj_name = models.CharField(max_length=100, blank=True, null=False)
-    curr_proj_description = models.TextField(max_length=500, blank=True, null=False)
+    curr_proj_name = models.CharField(max_length=100)
+    curr_proj_description = models.TextField(max_length=500)
     curr_proj_entry_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -24,11 +32,11 @@ class Biography(models.Model):
 
 
 class Project(models.Model):
-    proj_name = models.CharField(max_length=100, blank=False, unique=True)
-    proj_img = models.ImageField(upload_to='project_images/', blank=True)
-    proj_description = models.TextField(max_length=500, blank=False)
+    proj_name = models.CharField(max_length=100, blank=False, unique=True, null=False)
+    proj_img = models.ImageField(upload_to='project_images/', blank=True, null=True)    # optional
+    proj_description = models.TextField(max_length=500)
     # link to github repo
-    proj_url = models.URLField(max_length=1000, blank=False)
+    proj_url = models.URLField(max_length=1000)
     proj_date = models.DateField()
     # showcasing our project
     showcasing = models.BooleanField(default=True)  # turn off old projects
@@ -44,7 +52,7 @@ class Project(models.Model):
         slug = slugify(self.proj_name)
         unique_slug = slug
         number = 1
-        while Project.objects.filter(slug=unique_slug).exists():
+        while Project.objects.filter(proj_slug=unique_slug).exists():
             unique_slug = f'{slug}-{number}'
             number += 1
         return unique_slug

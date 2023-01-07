@@ -29,7 +29,7 @@ class ContactMeViewSet(viewsets.ModelViewSet):
 
 # Api endpoints to perform actions
 
-class BiographyApi(APIView):
+class BiographyAPI(APIView):
     """
     View to look at our biography information as well as adding and editing one biography instance
 
@@ -75,4 +75,53 @@ def delete_biography(request, bio_id):
     """
     bio_query = Biography.objects.get(id=bio_id)
     bio_query.delete()
-    return Response({'message':'Your biography has been deleted'}, status=status.HTTP_200_OK)
+    return Response({'message': 'Your biography has been deleted'}, status=status.HTTP_200_OK)
+
+
+class ViewAndCreateProjectsAPI(generics.ListCreateAPIView):
+    """
+    View all the Projects in our database
+        * this is allowed for everyone to see
+
+    Create Projects to our database
+        * only admin users can do that
+    """
+    queryset = Project.objects.all()   # we dont need to overwrite get_queryset() bc there are no filters
+    serializer_class = ProjectSerializer
+
+
+class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Update a Project; given a project slug
+
+        * Generic View to Retrieve(GET), Update(PUT), Destroy(DELETE)
+    """
+
+    serializer_class = ProjectSerializer
+
+    # we are going to need to overwrite get_queryset bc generics.RetrieveUpdateDestroyAPIView needs a slug
+    def get_queryset(self, *args, **kwargs):
+        proj_slug = self.kwargs.get('proj_slug')
+        proj_obj = Project.objects.get(proj_slug=proj_slug)
+        return proj_obj # return some query based off our proj slug
+
+    # creating the retrieve function
+    def retrieve(self, request, *args, **kwargs):
+        proj_obj = self.get_queryset()
+        serializer = ProjectSerializer(proj_obj)
+        return Response(serializer.data)
+
+    # creating the update function
+    def update(self, request, *args, **kwargs):
+        proj_obj = self.get_queryset()
+        serializer = ProjectSerializer(proj_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # creating the destroy function
+    def destroy(self, request, *args, **kwargs):
+        proj_obj = self.get_queryset()
+        proj_obj.delete()
+        return Response({'message': 'Your project has been deleted'}, status=status.HTTP_200_OK)
