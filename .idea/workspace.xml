@@ -3,10 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,7 +129,9 @@
       <workItem from="1673119732527" duration="4005000" />
       <workItem from="1673123779892" duration="5814000" />
       <workItem from="1673393476629" duration="138000" />
-      <workItem from="1673417265951" duration="1169000" />
+      <workItem from="1673417265951" duration="1482000" />
+      <workItem from="1673461563576" duration="4927000" />
+      <workItem from="1673466590961" duration="7351000" />
     </task>
     <servers />
   </component>

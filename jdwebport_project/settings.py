@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Our apps
     'jdwebport_app',
     'rest_framework',
+    'django_extensions'
 
 ]
 
