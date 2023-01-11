@@ -125,3 +125,63 @@ class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
         proj_obj = self.get_queryset()
         proj_obj.delete()
         return Response({'message': 'Your project has been deleted'}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def view_all_contact_mes(request):
+    """
+    View all the Contact Mes in our database
+        * This gathers every contact me (completed or incomplete)
+    """
+    contact_mes = ContactMe.objects.all()
+    serializer = ContactMeSerializer(contact_mes, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
+    """
+    View Contact Mes that are incomplete in our database
+        * this is allowed for everyone to see
+
+    Create Contact Mes to our database
+        * only admin users can do that
+    """
+    queryset = ContactMe.objects.filter(inquiry_accomplished=False) # want active inquiries
+    serializer_class = ContactMeSerializer
+
+
+class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Update a ContactMe; given a ContactMe ID
+
+        * Generic View to Retrieve(GET), Update(PUT), Destroy(DELETE)
+    """
+
+    serializer_class = ContactMeSerializer
+
+    # we are going to need to overwrite get_queryset bc generics.RetrieveUpdateDestroyAPIView needs a slug
+    def get_queryset(self, *args, **kwargs):
+        contact_id = self.kwargs.get('contact_id')
+        contact_obj = ContactMe.objects.get(id=contact_id)
+        return contact_obj # return some query based off our contact id
+
+    # creating the retrieve function
+    def retrieve(self, request, *args, **kwargs):
+        contact_obj = self.get_queryset()
+        serializer = ContactMeSerializer(contact_obj)
+        return Response(serializer.data)
+
+    # creating the update function
+    def update(self, request, *args, **kwargs):
+        contact_obj = self.get_queryset()
+        serializer = ContactMeSerializer(contact_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # creating the destroy function
+    def destroy(self, request, *args, **kwargs):
+        contact_obj = self.get_queryset()
+        contact_obj.delete()
+        return Response({'message': 'Your inquiry has been deleted'}, status=status.HTTP_200_OK)

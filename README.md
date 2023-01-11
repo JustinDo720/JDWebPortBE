@@ -32,20 +32,20 @@
     - Contact me
 - [x] Create our admin view and super user 
 - [x] Start connecting our django app with Restapi 
-- [ ] Create API endpoints and fill them with fake data using Faker
+- [x] Create API endpoints and fill them with fake data using Faker
      - Pagination
-     - API Endpoints:
-        -[x] Biography (get, post, put, delete) 
-        -[x] Project (get, post, put, delete) 
-        -[ ] Contact me (get, post, put, delete)
+     - API Endpoints
+  -[x] Biography (get, post, put, delete)
+  -[x] Project (get, post, put, delete)
+  -[x] Contact me (get, post, put, delete)
 - [x] Create your own permissions for Admin users only
 - [ ] Add Authentication system before testing endpoints  
      - BE SURE TO DISABLE LINE 19 and ENABLE LINE 18 AFTER AUTH SYS
-- [ ] Test API endpoints using postman 
+- [x] Test API endpoints using postman 
      - API Endpoints:
-        -[x] Biography (get, post, put, delete) 
-        -[x] Project (get, post, put, delete) 
-        -[ ] Contact me (get, post, put, delete) 
+  -[x] Biography (get, post, put, delete)
+  -[x] Project (get, post, put, delete)
+  -[x] Contact me (get, post, put, delete) 
 - [ ] Work on images and test them using Lorem Picsum
 - [ ] Switch local storages to Django Storages (AWS S3 Bucket or others) 
 - [ ] Switch database to AWS RDS DB  
