@@ -39,7 +39,7 @@
   -[x] Project (get, post, put, delete)
   -[x] Contact me (get, post, put, delete)
 - [x] Create your own permissions for Admin users only
-- [ ] Add Authentication system before testing endpoints  
+- [x] Add Authentication system before testing endpoints  
      - BE SURE TO DISABLE LINE 19 and ENABLE LINE 18 AFTER AUTH SYS
 - [x] Test API endpoints using postman 
      - API Endpoints:

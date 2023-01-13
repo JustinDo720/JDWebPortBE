@@ -42,7 +42,12 @@ class BiographyAPI(APIView):
         """
         returns our bio info
         """
-        bio_query = Biography.objects.latest('id')  # we want to get the latest id in case we del id=1 row
+
+        # sometimes we might have not one in our db so we need to take that into account
+        try:
+            bio_query = Biography.objects.latest('id')  # we want to get the latest id in case we del id=1 row
+        except Exception:
+            bio_query = None
         serializer = BiographySerializer(bio_query)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

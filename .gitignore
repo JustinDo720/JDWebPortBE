@@ -1,5 +1,7 @@
 /venv/
 db.sqlite3
-/__pycache__/
+/jdwebport_project/__pycache__/
 /jdwebport_app/__pycache__/
 /jdwebport_app/migrations/__pycache__/
+/jdwebport_project/.env/
+.env

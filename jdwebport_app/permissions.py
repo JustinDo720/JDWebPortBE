@@ -15,7 +15,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             if request.user and request.user.is_superuser:
                 return True
             # or else we'll disable this for everyone else
-            # return False  CHANGE THIS WHEN WE SET UP AUTHENTICATION SYSTEM
-            return True # DISABLE THIS WHEN WE SET UP AUTHENTICATION SYSTEM
-        return True # allow everything else
+            return False
+        elif request.method == 'GET':
+            return True # allow GET requests
 

@@ -2,11 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +137,10 @@
       <workItem from="1673393476629" duration="138000" />
       <workItem from="1673417265951" duration="1482000" />
       <workItem from="1673461563576" duration="4927000" />
-      <workItem from="1673466590961" duration="7351000" />
+      <workItem from="1673466590961" duration="8068000" />
+      <workItem from="1673479646290" duration="1846000" />
+      <workItem from="1673598246490" duration="1360000" />
+      <workItem from="1673645579087" duration="2847000" />
     </task>
     <servers />
   </component>
