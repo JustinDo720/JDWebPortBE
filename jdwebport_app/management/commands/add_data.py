@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from jdwebport_app.models import Project, Biography, ContactMe
 from faker import Faker
+import random
 
 
 class Command(BaseCommand):
@@ -44,6 +45,7 @@ class Command(BaseCommand):
                 fake_data = {
                     'date': fake.date(),
                     'url': fake.url(),
+                    'img_num': random.randint(1, 250),
                     'desc': fake.paragraph(nb_sentences=10),
                     'text': fake.unique.text(max_nb_chars=20)
                 }
@@ -51,10 +53,12 @@ class Command(BaseCommand):
                     proj_name=fake_data['text'],
                     proj_description=fake_data['desc'],
                     proj_url=fake_data['url'],
+                    proj_img_url=f'https://picsum.photos/id/{fake_data["img_num"]}/200/300',
                     proj_date=fake_data['date'],
                     showcasing_url=fake_data['url']
                 )
                 project.save()
+                print(f"{project} created")
 
         def biography_instance():
             # creating a biography instance

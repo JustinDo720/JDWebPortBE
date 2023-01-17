@@ -46,7 +46,8 @@
   -[x] Biography (get, post, put, delete)
   -[x] Project (get, post, put, delete)
   -[x] Contact me (get, post, put, delete) 
-- [ ] Work on images and test them using Lorem Picsum
+- [x] Work on images and test them using Lorem Picsum
+- [x] Pagination on projects?
 - [ ] Switch local storages to Django Storages (AWS S3 Bucket or others) 
 - [ ] Switch database to AWS RDS DB  
 - [ ] Deploy with AWS Elastic Beanstalk

@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from .pagination import ProjectResultsSetPagination, ContactMeResultsSetPagination
 
 
 # Create your views here.
@@ -93,6 +94,7 @@ class ViewAndCreateProjectsAPI(generics.ListCreateAPIView):
     """
     queryset = Project.objects.all()   # we dont need to overwrite get_queryset() bc there are no filters
     serializer_class = ProjectSerializer
+    pagination_class = ProjectResultsSetPagination
 
 
 class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -153,6 +155,7 @@ class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
     """
     queryset = ContactMe.objects.filter(inquiry_accomplished=False) # want active inquiries
     serializer_class = ContactMeSerializer
+    pagination_class = ContactMeResultsSetPagination
 
 
 class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):

@@ -5,3 +5,4 @@ db.sqlite3
 /jdwebport_app/migrations/__pycache__/
 /jdwebport_project/.env/
 .env
+/media/
