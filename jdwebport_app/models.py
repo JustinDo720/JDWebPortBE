@@ -34,6 +34,7 @@ class Biography(models.Model):
 class Project(models.Model):
     proj_name = models.CharField(max_length=100, blank=False, unique=True, null=False)
     proj_img = models.ImageField(upload_to='project_images/', blank=True, null=True)    # optional
+    proj_img_url = models.URLField(max_length=1000, blank=True, null=True)  # optional
     proj_description = models.TextField(max_length=500)
     # link to github repo
     proj_url = models.URLField(max_length=1000)
@@ -57,9 +58,14 @@ class Project(models.Model):
             number += 1
         return unique_slug
 
+    def _get_image_url(self):
+        return self.proj_img.url
+
     def save(self, *args, **kwargs):
         if not self.proj_slug:
             self.proj_slug = self._get_unique_slug()
+        if self.proj_img:
+            self.proj_img_url = self._get_image_url()
         super().save(*args, **kwargs)
 
     def __str__(self):
