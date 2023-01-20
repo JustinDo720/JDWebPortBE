@@ -87,12 +87,29 @@ WSGI_APPLICATION = 'jdwebport_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Testing DB
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME_TESTING'),
+        'HOST': env('DB_HOST_TESTING'),
+        'USER': env('DB_USER_TESTING'),
+        'PASSWORD': env('DB_PASSWORD_TESTING'),
+        'PORT': env('DB_PORT_TESTING'),
     }
 }
+
+# # Production DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('DB_NAME'),
+#         'HOST': env('DB_HOST'),
+#         'USER': env('DB_USER'),
+#         'PASSWORD': env('DB_PASSWORD'),
+#         'PORT': env('DB_PORT'),
+#     }
+# }
 
 
 # Password validation

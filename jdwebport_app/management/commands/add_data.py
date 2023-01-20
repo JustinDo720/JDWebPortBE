@@ -82,7 +82,7 @@ class Command(BaseCommand):
             bio_count = Biography.objects.count()
             if bio_count < 1:
                 fake_data = {
-                    'para': fake.paragraph(nb_sentences=30),
+                    'para': fake.paragraph(nb_sentences=10),
                     'desc': fake.paragraph(nb_sentences=3),
                     'text': fake.text(max_nb_chars=20)
                 }
