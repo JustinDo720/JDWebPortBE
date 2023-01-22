@@ -48,6 +48,6 @@
   -[x] Contact me (get, post, put, delete) 
 - [x] Work on images and test them using Lorem Picsum
 - [x] Pagination on projects?
-- [ ] Switch local storages to Django Storages (AWS S3 Bucket or others) 
-- [ ] Switch database to AWS RDS DB  
+- [x] Switch local storages to Django Storages (AWS S3 Bucket or others) 
+- [x] Switch database to AWS RDS (relational database service) (Postgresql DB)  
 - [ ] Deploy with AWS Elastic Beanstalk

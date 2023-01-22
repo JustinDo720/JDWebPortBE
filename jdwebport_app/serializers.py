@@ -10,9 +10,25 @@ class BiographySerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = (
+            'id',
+            'proj_name',
+            'proj_img',
+            'proj_img_url',
+            'proj_description',
+            'proj_url',
+            'proj_date',
+            'showcasing',
+            'showcasing_url',
+            'proj_slug',
+        )
+
+    def get_proj_img_url(self, obj):
+        return obj._get_image_url()
 
 
 class ContactMeSerializer(serializers.ModelSerializer):

@@ -87,12 +87,29 @@ WSGI_APPLICATION = 'jdwebport_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Testing DB
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME_TESTING'),
+        'HOST': env('DB_HOST_TESTING'),
+        'USER': env('DB_USER_TESTING'),
+        'PASSWORD': env('DB_PASSWORD_TESTING'),
+        'PORT': env('DB_PORT_TESTING'),
     }
 }
+
+# # Production DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env('DB_NAME'),
+#         'HOST': env('DB_HOST'),
+#         'USER': env('DB_USER'),
+#         'PASSWORD': env('DB_PASSWORD'),
+#         'PORT': env('DB_PORT'),
+#     }
+# }
 
 
 # Password validation
@@ -191,3 +208,18 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+# Django storages
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+# AWS Credentials
+AWS_S3_ACCESS_KEY_ID = env('AWS_ACCESS_KEY')
+AWS_S3_SECRET_ACCESS_KEY = env('AWS_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_BUCKET_NAME')
+
+# AWS Extra Settings
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_REGION_NAME= env('AWS_REGION_NAME')
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+AWS_QUERYSTRING_AUTH = False
