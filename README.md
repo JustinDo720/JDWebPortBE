@@ -50,4 +50,4 @@
 - [x] Pagination on projects?
 - [x] Switch local storages to Django Storages (AWS S3 Bucket or others) 
 - [x] Switch database to AWS RDS (relational database service) (Postgresql DB)  
-- [ ] Deploy with AWS Elastic Beanstalk
+- [x] Deploy with AWS Elastic Beanstalk
