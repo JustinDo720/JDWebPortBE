@@ -6,3 +6,9 @@ db.sqlite3
 /jdwebport_project/.env/
 .env
 /media/
+
+# Elastic Beanstalk Files
+.ebextensions
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
