@@ -98,28 +98,28 @@ WSGI_APPLICATION = 'jdwebport_project.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # Testing DB
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME_TESTING'),
-        'HOST': env('DB_HOST_TESTING'),
-        'USER': env('DB_USER_TESTING'),
-        'PASSWORD': env('DB_PASSWORD_TESTING'),
-        'PORT': env('DB_PORT_TESTING'),
-    }
-}
-
-# # Production DB
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env('DB_NAME'),
-#         'HOST': env('DB_HOST'),
-#         'USER': env('DB_USER'),
-#         'PASSWORD': env('DB_PASSWORD'),
-#         'PORT': env('DB_PORT'),
+#         'NAME': env('DB_NAME_TESTING'),
+#         'HOST': env('DB_HOST_TESTING'),
+#         'USER': env('DB_USER_TESTING'),
+#         'PASSWORD': env('DB_PASSWORD_TESTING'),
+#         'PORT': env('DB_PORT_TESTING'),
 #     }
 # }
+
+# # Production DB
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'HOST': env('DB_HOST'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'PORT': env('DB_PORT'),
+    }
+}
 
 
 # Password validation
@@ -169,11 +169,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # restframework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',    # SJWT Token Authentication
+        'rest_framework.authentication.SessionAuthentication',  # For Restapi Authentication
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
-        # 'rest_framework.permissions.AllowAny',  # temp
         'jdwebport_app.permissions.IsOwnerOrReadOnly'
     ]
 }

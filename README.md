@@ -51,3 +51,5 @@
 - [x] Switch local storages to Django Storages (AWS S3 Bucket or others) 
 - [x] Switch database to AWS RDS (relational database service) (Postgresql DB)  
 - [x] Deploy with AWS Elastic Beanstalk
+- [x] Login on RESTFRAMEWORK doesnt work properly 
+- [ ] Corsheaders 
