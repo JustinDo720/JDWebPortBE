@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'jdwebport_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# Testing DB
+Testing DB
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

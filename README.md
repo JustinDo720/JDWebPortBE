@@ -49,5 +49,5 @@
 - [x] Work on images and test them using Lorem Picsum
 - [x] Pagination on projects?
 - [x] Switch local storages to Django Storages (AWS S3 Bucket or others) 
-- [x] Switch database to AWS RDS (relational database service) (Postgresql DB)  
-- [x] Deploy with AWS Elastic Beanstalk
+- [x] ~~Switch database to AWS RDS (relational database service) (Postgresql DB)~~ Changed to ElephantSQL due to Excessive Payments to AWS :C 
+- [x] ~~Deploy with AWS Elastic Beanstalk~~ Changed to another Deployment due to Excessive Payments to AWS :C

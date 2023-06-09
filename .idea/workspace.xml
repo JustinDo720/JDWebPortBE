@@ -2,12 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/__pycache__/__init__.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/__pycache__/__init__.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,11 +42,14 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/venv/Scripts/activate" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jdwebport_project" />
     <property name="settings.editor.selected.configurable" value="io.unthrottled.amii.config.ui.PluginSettingsUI" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\justi\PycharmProjects\JDWebPortBE\jdwebport_project" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\justi\PycharmProjects\JDWebPortBE\jdwebport_app\template" />
     </key>
@@ -148,6 +155,9 @@
       <workItem from="1674348467674" duration="105000" />
       <workItem from="1674348660019" duration="1745000" />
       <workItem from="1674455239600" duration="4664000" />
+      <workItem from="1686263324955" duration="3627000" />
+      <workItem from="1686270243804" duration="2514000" />
+      <workItem from="1686274076530" duration="332000" />
     </task>
     <servers />
   </component>
