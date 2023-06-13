@@ -193,3 +193,18 @@ class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
         contact_obj = self.get_queryset()
         contact_obj.delete()
         return Response({'message': 'Your inquiry has been deleted'}, status=status.HTTP_200_OK)
+
+
+class ViewSocialsProfileAPI(APIView):
+    def get(self, request):
+        """
+        returns our bio info
+        """
+
+        # sometimes we might have not one in our db so we need to take that into account
+        try:
+            profile_query = Profile.objects.latest('id')  # we want to get the latest id in case we del id=1 row
+        except Exception:
+            profile_query = None
+        serializer = ProfileSerializer(profile_query)
+        return Response(serializer.data, status=status.HTTP_200_OK)

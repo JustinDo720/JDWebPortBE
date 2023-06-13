@@ -12,12 +12,44 @@ Safely delete migrations rules:
 """
 
 
+class Profile(models.Model):
+    full_name = models.CharField(max_length=100)
+    # Quick three words etc description
+    quick_description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.full_name
+
+
+class SocialsProfile(models.Model):
+    """
+        social name: The social platform like instagram or github
+        info: our username for that social/communicative platform
+        info_link: a link to our platform
+        info_icon: a Material Design Icon for be placed next to the buttons
+        info_color: just the color of the button
+    """
+    social_name = models.CharField(max_length=50)
+    info = models.CharField(max_length=50)
+    info_link = models.URLField()
+    info_icon = models.CharField(max_length=20)
+    info_color = models.CharField(max_length=20)
+
+    # all of these social details are associated with our main profile
+    profile = models.ForeignKey(Profile, blank=True, related_name='socials', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.social_name
+
+
 class Biography(models.Model):
     # Main bio description
     bio_description = models.TextField(max_length=500, blank=False)
-    # Quick three words etc description
-    quick_description = models.CharField(max_length=100)
     bio_entry_date = models.DateTimeField(auto_now_add=True)
+
+    # Quote & Author
+    quote = models.TextField(max_length=500, blank=False)
+    author = models.CharField(max_length=200)
 
     # current project/activity
     curr_proj_name = models.CharField(max_length=100)
@@ -27,8 +59,11 @@ class Biography(models.Model):
     class Meta:
         verbose_name = "Biographies"
 
+    def get_short_bio_description(self):    # this will be displayed on the front page near "see more"
+        return f'{self.bio_description[:100]}...'
+
     def __str__(self):
-        return self.bio_description[:100]
+        return self.get_short_bio_description()
 
 
 class Project(models.Model):

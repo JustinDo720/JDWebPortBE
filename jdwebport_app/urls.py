@@ -12,5 +12,7 @@ urlpatterns = [
     # Contact Me View
     path('contact_me/', views.ViewAndCreateContactMesAPI.as_view()),
     path('contact_me/all_inquries/', views.view_all_contact_mes),
-    path('contact_me/<int:contact_id>/', views.UpdateContactMeAPI.as_view())
+    path('contact_me/<int:contact_id>/', views.UpdateContactMeAPI.as_view()),
+    # Profile Views
+    path('profile/', views.ViewSocialsProfileAPI.as_view()),
 ]

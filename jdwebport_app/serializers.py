@@ -9,6 +9,20 @@ class BiographySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SocialsProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SocialsProfile
+        fields = '__all__'
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    socials = SocialsProfileSerializer(many=True)
+
+    class Meta:
+        model = Profile
+        fields = ('full_name', 'quick_description', 'socials')
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
 

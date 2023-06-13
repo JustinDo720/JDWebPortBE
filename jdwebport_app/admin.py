@@ -6,7 +6,9 @@ from .models import *
 our_models = [
     Biography,
     Project,
-    ContactMe
+    ContactMe,
+    SocialsProfile,
+    Profile
 ]
 
 admin.site.register(model for model in our_models)
