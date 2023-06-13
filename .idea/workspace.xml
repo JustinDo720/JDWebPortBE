@@ -4,13 +4,7 @@
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/__pycache__/__init__.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/__pycache__/__init__.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/urls.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -157,7 +151,9 @@
       <workItem from="1674455239600" duration="4664000" />
       <workItem from="1686263324955" duration="3627000" />
       <workItem from="1686270243804" duration="2514000" />
-      <workItem from="1686274076530" duration="332000" />
+      <workItem from="1686274076530" duration="545000" />
+      <workItem from="1686307636092" duration="1364000" />
+      <workItem from="1686619466738" duration="1025000" />
     </task>
     <servers />
   </component>
