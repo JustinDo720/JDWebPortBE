@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -55,6 +56,9 @@ class Biography(models.Model):
     curr_proj_name = models.CharField(max_length=100)
     curr_proj_description = models.TextField(max_length=500)
     curr_proj_entry_date = models.DateTimeField(auto_now_add=True)
+
+    # profile link
+    profile = models.ForeignKey(Profile, related_name="biography", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Biographies"
@@ -119,3 +123,65 @@ class ContactMe(models.Model):
     def __str__(self):
         return self.user_inquiry[:20] + " Accomplished: " + str(self.inquiry_accomplished)
 
+
+class Resume(models.Model):
+    # profile info
+    profile = models.ForeignKey(Profile, related_name="resume", on_delete=models.CASCADE)
+    # school info
+    school_name = models.CharField(max_length=150)
+    school_loc = models.CharField(max_length=250)
+    # school gpa validator for max gpa
+
+    def validate_gpa(value):
+        if value > 4.0 or value < 0:
+            return ValidationError
+        else:
+            return value
+
+    school_gpa = models.DecimalField(max_digits=2, decimal_places=1, validators=[validate_gpa])
+    school_degree = models.CharField(max_length=150)
+    # we can use a method to return a list based off of commas
+    school_rel_courses = models.TextField(max_length=500, help_text="Comma Seperated")
+
+    # skills
+    skills_lang = models.TextField(max_length=500, help_text="Comma Seperated")
+    skills_fw = models.TextField(max_length=500, help_text="Comma Seperated")
+    skills_tools = models.TextField(max_length=500, help_text="Comma Seperated")
+
+    # Projects and Awards and Achievement ForeignKeys but we need to make the methods
+    def listify_field(self, field):
+        return field.split(',')
+
+    def __str__(self):
+        return self.school_name
+
+
+class ResumeProjects(models.Model):
+    project_name = models.CharField(max_length=225)
+    slug = models.SlugField()
+    resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.project_name
+
+
+class ResumeAwardsAndAchievements(models.Model):
+    award_achievement_name = models.CharField(max_length=150)
+    initial_date = models.DateField()
+    final_date = models.DateField()
+    duration = models.DurationField()
+    resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return award_achievement_name
+
+
+class ProjectNotes(models.Model):
+    # all possible notes for both our Projects and Resume Projects
+    init_notes = models.TextField(max_length=500, blank=True, null=True)
+    final_notes = models.TextField(max_length=500, blank=True, null=True)
+    project_notes = models.TextField(max_length=700, blank=True, null=True)
+
+    # two different foreign keys with blanks as possible values for us to choose which model to link it to
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, blank=True, null=True)

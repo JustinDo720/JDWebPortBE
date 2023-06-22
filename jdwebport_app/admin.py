@@ -8,7 +8,10 @@ our_models = [
     Project,
     ContactMe,
     SocialsProfile,
-    Profile
+    Profile,
+    ProjectNotes,
+    ResumeProjects,
+    Resume
 ]
 
 admin.site.register(model for model in our_models)

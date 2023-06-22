@@ -56,9 +56,9 @@
     - Short & Long Bio, quote w/ author
   - [ ] Contact Me API 
     - Files and Feedback questions 
-  - [ ] Resume API 
+  - [x] Resume API 
     - Info, Skills, Projects, awards and achievements 
   - [ ] Projects API 
     - Current Workings, All Projects, Specific Projects, Notes Model 
-  - [ ] Profile API 
+  - [x] Profile API 
     - Socials, Quick Description and Name

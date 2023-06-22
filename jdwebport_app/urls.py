@@ -15,4 +15,6 @@ urlpatterns = [
     path('contact_me/<int:contact_id>/', views.UpdateContactMeAPI.as_view()),
     # Profile Views
     path('profile/', views.ViewSocialsProfileAPI.as_view()),
+    # Resume Views
+    path('resume/', views.ViewResumeAPI.as_view()),
 ]

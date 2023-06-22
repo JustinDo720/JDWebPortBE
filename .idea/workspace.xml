@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/jdwebport_app/migrations/0004_biography_socials_profile.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/admin.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" afterDir="false" />
@@ -161,7 +159,8 @@
       <workItem from="1686270243804" duration="2514000" />
       <workItem from="1686274076530" duration="545000" />
       <workItem from="1686307636092" duration="1364000" />
-      <workItem from="1686619466738" duration="10117000" />
+      <workItem from="1686619466738" duration="10482000" />
+      <workItem from="1687412718790" duration="9872000" />
     </task>
     <servers />
   </component>

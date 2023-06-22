@@ -208,3 +208,14 @@ class ViewSocialsProfileAPI(APIView):
             profile_query = None
         serializer = ProfileSerializer(profile_query)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ViewResumeAPI(APIView):
+
+    def get(self, request):
+        try:
+            resume_query = Resume.objects.latest('id')  # we want to get the latest id in case we del id=1 row
+        except Exception:
+            resume_query = None
+        serializer = ResumeSerializer(resume_query)
+        return Response(serializer.data, status=status.HTTP_200_OK)
