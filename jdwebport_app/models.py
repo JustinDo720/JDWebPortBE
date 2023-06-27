@@ -112,9 +112,19 @@ class ContactMe(models.Model):
     user_email = models.EmailField(max_length=300, blank=False)
     user_first_name = models.CharField(max_length=30, blank=False)
     user_last_name = models.CharField(max_length=30, blank=False)
+    user_files = models.FileField(upload_to="contact_files/", blank=True, null=True)
     user_inquiry = models.TextField(max_length=500, blank=False)
     inquiry_date = models.DateTimeField(auto_now_add=True)
     inquiry_accomplished = models.BooleanField(default=False)
+
+    # choice field
+    PURPOSE_CHOICES = [
+        ('job_opp', "Job Opportunity"),
+        ('connect', "Connect With Me"),
+        ('feedback', "General/Website Feedback"),
+    ]
+    user_purpose = models.CharField(max_length=10, choices=PURPOSE_CHOICES, default='connect')
+
 
     class Meta:
         verbose_name = "Contact Me"
@@ -122,6 +132,53 @@ class ContactMe(models.Model):
 
     def __str__(self):
         return self.user_inquiry[:20] + " Accomplished: " + str(self.inquiry_accomplished)
+
+
+class Feedback(models.Model):
+        """
+            Feedback model could fall under two categories:
+                General --> overall descriptions / comments for anything (doesn't have to be website related)
+                Website --> Q&A / rating / tips etc ... for the website
+        """
+        # introduce the two options
+        FEEDBACK_CHOICES = [
+            ('gen', 'General'),
+            ('web', 'Website')
+        ]
+        feedback_option = models.CharField(max_length=3, choices=FEEDBACK_CHOICES, default='gen')
+
+        # either one will include the description and email
+        user_email = models.CharField(max_length=200, blank=False, null=False)
+        user_fb_desc = models.TextField(max_length=500, blank=False, null=False)  # required
+        user_web_fb_ans = models.CharField(max_length=300, blank=True, null=True)
+
+
+        def get_feedback_statements(self):
+            return [
+                "The overall layout and organization of my portfolio website is visually appealing.",
+                "The navigation on my portfolio website is intuitive and easy to use.",
+                "The use of images and multimedia elements on my portfolio website effectively showcases my work.",
+                "The responsiveness of my portfolio website ensures a seamless experience across different devices and screen sizes.",
+                "The inclusion of relevant information and project details on my portfolio website effectively communicates my skills and expertise."
+            ]
+
+        def get_feedback_answers(self):
+            # user_web_fb_ans will be a string of comma separated numbers which rep the answers to each question in order
+            if self.user_web_fb_ans:
+                feedback_answers = []
+                answers = self.user_web_fb_ans.split(',')
+                for index,statement in enumerate(self.get_feedback_statements()):
+                    feedback_answers.append({
+                        'question_num': index + 1,
+                        'question': self.get_feedback_statements()[index],
+                        'user_ans': answers[index]
+                    })
+                return feedback_answers
+            else:
+                return []
+
+        def __str__(self):
+            return self.user_email
 
 
 class Resume(models.Model):

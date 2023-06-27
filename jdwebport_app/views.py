@@ -6,6 +6,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .pagination import ProjectResultsSetPagination, ContactMeResultsSetPagination
+from rest_framework import permissions
 
 
 # Create your views here.
@@ -156,6 +157,7 @@ class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
     queryset = ContactMe.objects.filter(inquiry_accomplished=False) # want active inquiries
     serializer_class = ContactMeSerializer
     pagination_class = ContactMeResultsSetPagination
+    permission_classes = [permissions.AllowAny]
 
 
 class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -219,3 +221,10 @@ class ViewResumeAPI(APIView):
             resume_query = None
         serializer = ResumeSerializer(resume_query)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ViewAndCreateFeedbackAPI(generics.ListCreateAPIView):
+        queryset = Feedback.objects.all()
+        serializer_class = FeedbackSerializer
+        pagination_class = ContactMeResultsSetPagination # reusing that 10 ContactMe Results for Feedback API
+        permission_classes = [permissions.AllowAny]

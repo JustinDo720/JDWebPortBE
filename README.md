@@ -54,7 +54,7 @@
 - [ ] Revamped API version for jdwebportfe
   - [x] About Me API 
     - Short & Long Bio, quote w/ author
-  - [ ] Contact Me API 
+  - [x] Contact Me API 
     - Files and Feedback questions 
   - [x] Resume API 
     - Info, Skills, Projects, awards and achievements 

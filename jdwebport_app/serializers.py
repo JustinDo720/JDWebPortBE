@@ -26,6 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+    proj_notes = serializers.SerializerMethodField('get_proj_notes')
 
     class Meta:
         model = Project
@@ -36,6 +37,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'proj_img_url',
             'proj_description',
             'proj_url',
+            'proj_notes',
             'proj_date',
             'showcasing',
             'showcasing_url',
@@ -45,11 +47,27 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_proj_img_url(self, obj):
         return obj._get_image_url()
 
+    def get_proj_notes(self, obj):
+        return obj.projectnotes_set.all()
+
 
 class ContactMeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMe
         fields = "__all__"
+
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = (
+            'feedback_option',
+            'user_email',
+            'user_fb_desc',
+            'user_web_fb_ans',
+            'get_feedback_statements',
+            'get_feedback_answers',
+        )
 
 
 class ResumeSerializer(serializers.ModelSerializer):
