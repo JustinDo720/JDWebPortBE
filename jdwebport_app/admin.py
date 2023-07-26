@@ -11,7 +11,8 @@ our_models = [
     Profile,
     ProjectNotes,
     ResumeProjects,
-    Resume
+    Resume,
+    CurrProj
 ]
 
 admin.site.register(model for model in our_models)

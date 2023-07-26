@@ -1,6 +1,7 @@
 # We are going to make some serializers for our front-end
 from rest_framework import serializers
-from .models import *   # importing all models
+from .models import *   # importing all models\
+from django.http import JsonResponse
 
 
 class BiographySerializer(serializers.ModelSerializer):
@@ -24,9 +25,23 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('full_name', 'quick_description', 'socials', 'biography')
 
 
+class CurrProjSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurrProj
+        fields = "__all__"
+
+
+class ProjectNotesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectNotes
+        fields = '__all__'
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
-    proj_notes = serializers.SerializerMethodField('get_proj_notes')
+    proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
+    learnings = serializers.SerializerMethodField('get_learnings')
+    tools = serializers.SerializerMethodField('get_tools')
 
     class Meta:
         model = Project
@@ -42,13 +57,18 @@ class ProjectSerializer(serializers.ModelSerializer):
             'showcasing',
             'showcasing_url',
             'proj_slug',
+            'learnings',
+            'tools',
         )
 
     def get_proj_img_url(self, obj):
         return obj._get_image_url()
 
-    def get_proj_notes(self, obj):
-        return obj.projectnotes_set.all()
+    def get_learnings(self, obj):
+        return obj.listify_field(obj.proj_learnings)
+
+    def get_tools(self, obj):
+        return obj.listify_field(obj.proj_tools)
 
 
 class ContactMeSerializer(serializers.ModelSerializer):

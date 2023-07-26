@@ -52,11 +52,6 @@ class Biography(models.Model):
     quote = models.TextField(max_length=500, blank=False)
     author = models.CharField(max_length=200)
 
-    # current project/activity
-    curr_proj_name = models.CharField(max_length=100)
-    curr_proj_description = models.TextField(max_length=500)
-    curr_proj_entry_date = models.DateTimeField(auto_now_add=True)
-
     # profile link
     profile = models.ForeignKey(Profile, related_name="biography", on_delete=models.CASCADE)
 
@@ -70,10 +65,24 @@ class Biography(models.Model):
         return self.get_short_bio_description()
 
 
+# Recent Projects instead of Current Projects
+class CurrProj(models.Model):
+    focus_title = models.CharField(max_length=255)
+    focus_date = models.DateField()
+    focus_info = models.TextField(max_length=500)
+
+    def __str__(self):
+        return self.focus_title
+
+
 class Project(models.Model):
     proj_name = models.CharField(max_length=100, blank=False, unique=True, null=False)
     proj_img = models.ImageField(upload_to='project_images/', blank=True, null=True)    # optional
     proj_description = models.TextField(max_length=500)
+    proj_purpose = models.TextField(max_length=500)
+    proj_learnings = models.TextField(max_length=700, help_text="Comma Seperated")
+    proj_tools = models.CharField(max_length=500, help_text="Comma Seperated")
+
     # link to github repo
     proj_url = models.URLField(max_length=1000)
     proj_date = models.DateField()
@@ -82,6 +91,7 @@ class Project(models.Model):
     showcasing_url = models.URLField(max_length=1000)
     # project identifier
     proj_slug = models.SlugField(max_length=100, unique=True, blank=True)   # set blank true because we could set one
+
 
     class Meta:
         verbose_name = "Projects"
@@ -98,6 +108,10 @@ class Project(models.Model):
 
     def _get_image_url(self):
         return self.proj_img.url if self.proj_img else None
+
+    # method to be used in serializer for learnings and tools field
+    def listify_field(self, field):
+        return field.split(',')
 
     def save(self, *args, **kwargs):
         if not self.proj_slug:
@@ -240,5 +254,9 @@ class ProjectNotes(models.Model):
     project_notes = models.TextField(max_length=700, blank=True, null=True)
 
     # two different foreign keys with blanks as possible values for us to choose which model to link it to
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="proj_notes",blank=True, null=True)
     resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, blank=True, null=True)
+
+
+    def __str__(self):
+        return f"{self.project.proj_name}-{self.id}"

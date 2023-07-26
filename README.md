@@ -51,14 +51,14 @@
 - [x] Switch local storages to Django Storages (AWS S3 Bucket or others) 
 - [x] ~~Switch database to AWS RDS (relational database service) (Postgresql DB)~~ Changed to ElephantSQL due to Excessive Payments to AWS :C 
 - [x] ~~Deploy with AWS Elastic Beanstalk~~ Changed to another Deployment due to Excessive Payments to AWS :C
-- [ ] Revamped API version for jdwebportfe
+- [x] Revamped API version for jdwebportfe
   - [x] About Me API 
     - Short & Long Bio, quote w/ author
   - [x] Contact Me API 
     - Files and Feedback questions 
   - [x] Resume API 
     - Info, Skills, Projects, awards and achievements 
-  - [ ] Projects API 
+  - [x] Projects API 
     - Current Workings, All Projects, Specific Projects, Notes Model 
   - [x] Profile API 
     - Socials, Quick Description and Name

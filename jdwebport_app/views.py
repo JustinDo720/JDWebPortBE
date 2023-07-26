@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .pagination import ProjectResultsSetPagination, ContactMeResultsSetPagination
 from rest_framework import permissions
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
@@ -96,6 +97,15 @@ class ViewAndCreateProjectsAPI(generics.ListCreateAPIView):
     queryset = Project.objects.all()   # we dont need to overwrite get_queryset() bc there are no filters
     serializer_class = ProjectSerializer
     pagination_class = ProjectResultsSetPagination
+
+    # we do, however, need to overwrite the create function
+    def create(self, request, *args, **kwargs):
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid(): # we don't need proj notes to create a proj
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -228,3 +238,9 @@ class ViewAndCreateFeedbackAPI(generics.ListCreateAPIView):
         serializer_class = FeedbackSerializer
         pagination_class = ContactMeResultsSetPagination # reusing that 10 ContactMe Results for Feedback API
         permission_classes = [permissions.AllowAny]
+
+
+class ViewAndCreateCurrProjAPI(generics.ListCreateAPIView):
+    queryset = CurrProj.objects.all()[:3]
+    serializer_class = CurrProjSerializer
+    permission_classes = [permissions.AllowAny]

@@ -6,10 +6,13 @@
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/models.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/urls.cpython-39.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/__pycache__/views.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/admin.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/__pycache__/settings.cpython-39.pyc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +162,11 @@
       <workItem from="1686307636092" duration="1364000" />
       <workItem from="1686619466738" duration="10482000" />
       <workItem from="1687412718790" duration="10733000" />
-      <workItem from="1687843579142" duration="7656000" />
+      <workItem from="1687843579142" duration="8093000" />
+      <workItem from="1688146498875" duration="5171000" />
+      <workItem from="1689976637815" duration="11917000" />
+      <workItem from="1690328183506" duration="2479000" />
+      <workItem from="1690334551744" duration="4333000" />
     </task>
     <servers />
   </component>
