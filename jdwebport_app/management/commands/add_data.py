@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
-from jdwebport_app.models import Project, Biography, ContactMe
+from jdwebport_app.models import Project, Biography, ContactMe, Profile
+from jdwebport_app.models import *
 from faker import Faker
-
 
 
 class Command(BaseCommand):
@@ -58,6 +58,29 @@ class Command(BaseCommand):
                 project.save()
                 print(f"{project} created")
 
+        def profile_instance():
+            # creating a profile instance
+            """
+                {
+                    "full_name": [
+                        "This field is required."
+                    ],
+                    "quick_description": [
+                        "This field is required."
+                    ],
+                }
+            """
+            fake_data = {
+                "full_name": fake.name(),
+                "quick_description": fake.paragraph(nb_sentences=2)
+            }
+            profile = Profile.objects.create(
+                full_name = fake_data["full_name"],
+                quick_description = fake_data["quick_description"]
+            )
+            profile.save()
+
+
         def biography_instance():
             # creating a biography instance
             """
@@ -87,10 +110,11 @@ class Command(BaseCommand):
                     'text': fake.text(max_nb_chars=20)
                 }
                 biography = Biography.objects.create(
+                    profile = Profile.objects.first(),
                     bio_description=fake_data['para'],
-                    quick_description=fake_data['desc'],
-                    curr_proj_name=fake_data['text'],
-                    curr_proj_description=fake_data['para']
+                    # quick_description=fake_data['desc'],
+                    # curr_proj_name=fake_data['text'],
+                    # curr_proj_description=fake_data['para']
                 )
                 biography.save()
 
@@ -128,14 +152,136 @@ class Command(BaseCommand):
                 )
                 contact.save()
 
+            """
+                We need to make a few more instances:
+                    - Current Projects 
+                    - Feedbacks 
+                    - Project Notes 
+                    - Resume 
+                    - Resume Awards...
+                    - Resume Projects 
+                    - Social Profiles 
+            """
+            def curr_proj_instance():
+                # Creating a Current Project Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
+
+            def feedback_instance():
+                # Creating a Feedback Instance
+                """
+                    {
+                        "user_email": [
+                            "This field is required."
+                        ],
+                        "user_fb_desc": [
+                            "This field is required."
+                        ]
+                        "user_web_fb_ans": "5, 2, 4, 5, 1"???
+                    }
+                """
+
+            def proj_notes_instance():
+                # Creating a Project Notes Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
+
+            def resume_instance():
+                # Creating a Resume Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
+
+            def resume_awards_instance():
+                # Creating a Resume Awards Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
+
+            def resume_projects_instance():
+                # Creating a Resume Projects Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
+
+            def social_profiles_instance():
+                # Creating a Social Profiles Instance
+                """
+                    {
+                        "focus_title": [
+                            "This field is required."
+                        ],
+                        "focus_date": [
+                            "This field is required."
+                        ],
+                        "focus_info": [
+                            "This field is required."
+                        ]
+                    }
+                """
         if 'proj' in model:
             project_instance()
+        elif 'profile' in model:
+            profile_instance()
         elif 'bio' in model:
             biography_instance()
         elif 'contact' in model:
             contactme_instance()
         elif 'all' in model:
             # build all models
+            profile_instance()
             project_instance()
             biography_instance()
             contactme_instance()

@@ -4,6 +4,7 @@ from .models import *   # importing all models\
 from django.http import JsonResponse
 
 
+
 class BiographySerializer(serializers.ModelSerializer):
     class Meta:
         model = Biography
@@ -13,16 +14,24 @@ class BiographySerializer(serializers.ModelSerializer):
 class SocialsProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialsProfile
-        fields = '__all__'
+        fields = (
+            'id',
+            'social_name',
+            'info',
+            'info_link',
+            'info_icon',
+            'info_color',
+            'profile'
+        )
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    socials = SocialsProfileSerializer(many=True)
-    biography = BiographySerializer(many=True)
+    socials = SocialsProfileSerializer(many=True, allow_null=True, required=False)
+    biography = BiographySerializer(many=True, allow_null=True, required=False)
 
     class Meta:
         model = Profile
-        fields = ('full_name', 'quick_description', 'socials', 'biography')
+        fields = ('id', 'full_name', 'quick_description', 'socials', 'biography')
 
 
 class CurrProjSerializer(serializers.ModelSerializer):
@@ -31,10 +40,43 @@ class CurrProjSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# class ProjNotesRequirement:
+#     def __init__(self, base):
+#         self.base = base
+#
+#     def __call__(self, project_id, resume_project_id):
+#         if project_id is null and resume_project_id is null:
+#             msg = "This Note instance must be associated with a Project ID or Resume Project ID"
+#             raise serializers.ValidationError(msg)
+
+
 class ProjectNotesSerializer(serializers.ModelSerializer):
+    # just remember resume project notes and normal project notes are included
+    def validate(self,data):
+        """
+        Check if Project Notes have a Project ID or Resume Project ID (has to be either one) not both
+        """
+
+        # we need to use the get method to prevent KeyErrors .get(key, [default_value])
+        if data.get('project', None) is None and data.get('resume_project', None) is None:
+            msg = "This Note instance must be associated with a Project ID or Resume Project ID"
+            raise serializers.ValidationError({'message':msg})
+        elif data.get('project', None) is not None and data.get('resume_project', None) is not None:
+            msg = "This Note instance must be associated with ONE Project ID or Resume Project ID... not both"
+            raise serializers.ValidationError({'message': msg})
+
     class Meta:
         model = ProjectNotes
-        fields = '__all__'
+        fields = (
+            'id',
+            'init_notes',
+            'final_notes',
+            'project_notes',
+            'project',
+            'resume_project',
+        )
+        # extra_kwargs = {'client': {'required': False}}    # we can't use this because we need either or
+        # validators = [ProjNotesRequirement()]
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -89,9 +131,22 @@ class FeedbackSerializer(serializers.ModelSerializer):
             'get_feedback_answers',
         )
 
+"""
+    null value in column "profile_id" of relation "jdwebport_app_resume" violates not-null constraint
+    The issue is that we have a profile field within ResumeSerializer which interferes with POST request because it 
+    requires a Profile dictionary and when given ProfileSerializer(profile_query).data it still yields the same error 
+    therefore we're going to create another resumeserializer that's postable and keep the current one is a get serializer
+"""
+
+
+class POSTResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resume
+        fields = '__all__'
+
 
 class ResumeSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileSerializer(allow_null=True, required=False, read_only=True)
     rel_courses = serializers.SerializerMethodField('get_rel_courses')
     lang = serializers.SerializerMethodField('get_lang')
     fw = serializers.SerializerMethodField('get_fw')
@@ -111,7 +166,8 @@ class ResumeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resume
-        fields = ('profile',
+        fields = ('id',
+                  'profile',
                   'school_name',
                   'school_loc',
                   'school_gpa',
@@ -120,4 +176,28 @@ class ResumeSerializer(serializers.ModelSerializer):
                   'lang',
                   'fw',
                   'tools',
+        )
+
+
+class ResumeProjectsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResumeProjects
+        fields = (
+            'id',
+            'project_name',
+            'resume_slug',
+            'resume'
+        )
+
+
+class ResumeAwardsAndAchievementsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResumeAwardsAndAchievements
+        fields = (
+            'id',
+            'award_achievement_name',
+            'initial_date',
+            'final_date',
+            'duration',
+            'resume'
         )

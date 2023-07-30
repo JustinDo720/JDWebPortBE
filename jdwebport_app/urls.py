@@ -9,7 +9,8 @@ urlpatterns = [
     # Project view
     path('projects/', views.ViewAndCreateProjectsAPI.as_view()),
     path('projects/recent_projects/', views.ViewAndCreateCurrProjAPI.as_view()), # moved above potential crosspath url
-    path('projects/<slug:proj_slug>/', views.UpdateProjectAPI.as_view()), # careful for crosspaths with the url above
+    path('projects/notes/', views.ViewAndCreateProjNotesAPI.as_view()), # moved above potential crosspath url
+    path('projects/view_project/<slug:proj_slug>/', views.UpdateProjectAPI.as_view()), # careful for crosspaths with the url above
     # Contact Me View
     path('contact_me/', views.ViewAndCreateContactMesAPI.as_view()),
     path('contact_me/all_inquries/', views.view_all_contact_mes),
@@ -17,7 +18,18 @@ urlpatterns = [
     # Feedback View
     path('contact_me/feedback/', views.ViewAndCreateFeedbackAPI.as_view()),
     # Profile Views
-    path('profile/', views.ViewSocialsProfileAPI.as_view()),
+    # path('profile/', views.ViewAndCreateSocialsProfileAPI.as_view()),
+
     # Resume Views
-    path('resume/', views.ViewResumeAPI.as_view()),
+
+    # NEED TESTING VIEWS
+    # path('projects/notes/<int:proj_notes_id>/', views.UpdateProjNotesAPI.as_view()),
+    path('resume/', views.FullResumeAPI.as_view()),
+    path('resume/projects/', views.ViewAndCreateResumeProjectsAPI.as_view()),
+    path('resume/projects/<slug:resume_slug>/', views.UpdateResumeProjectsAPI.as_view()),
+    path('resume/awards/', views.ViewAndCreateResumeAwardsAndAchievementsAPI.as_view()),
+    path('resume/awards/<int:id>/', views.UpdateResumeAwardsAndAchievementsAPI.as_view()),
+    path('profile/', views.view_create_update_profile),
+    path('profile/socials/', views.ViewAndCreateSocialsProfileAPI.as_view()),
+    path('profile/socials/<int:socials_id>/', views.UpdateSocialsProfileAPI.as_view()),
 ]
