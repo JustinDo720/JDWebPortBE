@@ -180,13 +180,15 @@ class ResumeSerializer(serializers.ModelSerializer):
 
 
 class ResumeProjectsSerializer(serializers.ModelSerializer):
+    resume_proj_notes = ProjectNotesSerializer(many=True,allow_null=True,required=False)
     class Meta:
         model = ResumeProjects
         fields = (
             'id',
             'project_name',
             'resume_slug',
-            'resume'
+            'resume',
+            'resume_proj_notes',
         )
 
 

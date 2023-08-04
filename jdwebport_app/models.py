@@ -244,7 +244,7 @@ class ResumeAwardsAndAchievements(models.Model):
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
 
     def __str__(self):
-        return award_achievement_name
+        return self.award_achievement_name
 
 
 class ProjectNotes(models.Model):
@@ -261,8 +261,13 @@ class ProjectNotes(models.Model):
         know which notes this instance belongs to 
     """
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="proj_notes",blank=True, null=True)
-    resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, blank=True, null=True)
+    resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, related_name="resume_proj_notes", blank=True, null=True)
 
 
     def __str__(self):
-        return f"{self.project.proj_name}-{self.id}"
+        if self.project:
+            return f"{self.project.proj_name}-{self.id}"
+        elif self.resume_project:
+            return f"{self.resume_project.project_name}-{self.id}"
+        else:
+            return "testing"

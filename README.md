@@ -67,4 +67,4 @@
   - [x] Posting new Resume API --> functional based API to create a new resume info   
   - [x] Resume Awards & Achievements Sub API 
   - [x] Social Profiles Sub API
-- [ ] Create Faker Scripts for sub API
+- [x] Create Faker Scripts for sub API
