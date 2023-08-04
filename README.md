@@ -62,3 +62,9 @@
     - Current Workings, All Projects, Specific Projects, Notes Model 
   - [x] Profile API 
     - Socials, Quick Description and Name
+- [x] Work on Sub APIs (Creating APIs for requests that build our main Revamped APIs)
+  - [x] Resume Projects Sub API 
+  - [x] Posting new Resume API --> functional based API to create a new resume info   
+  - [x] Resume Awards & Achievements Sub API 
+  - [x] Social Profiles Sub API
+- [x] Create Faker Scripts for sub API

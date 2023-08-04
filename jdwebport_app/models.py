@@ -212,16 +212,16 @@ class Resume(models.Model):
     school_gpa = models.DecimalField(max_digits=2, decimal_places=1, validators=[validate_gpa])
     school_degree = models.CharField(max_length=150)
     # we can use a method to return a list based off of commas
-    school_rel_courses = models.TextField(max_length=500, help_text="Comma Seperated")
+    school_rel_courses = models.TextField(max_length=500, help_text="Comma Seperated", blank=False, null=False)
 
     # skills
-    skills_lang = models.TextField(max_length=500, help_text="Comma Seperated")
-    skills_fw = models.TextField(max_length=500, help_text="Comma Seperated")
-    skills_tools = models.TextField(max_length=500, help_text="Comma Seperated")
+    skills_lang = models.TextField(max_length=500, help_text="Comma Seperated", blank=False, null=False)
+    skills_fw = models.TextField(max_length=500, help_text="Comma Seperated", blank=False, null=False)
+    skills_tools = models.TextField(max_length=500, help_text="Comma Seperated", blank=False, null=False)
 
     # Projects and Awards and Achievement ForeignKeys but we need to make the methods
     def listify_field(self, field):
-        return field.split(',')
+        return field.split(', ')
 
     def __str__(self):
         return self.school_name
@@ -229,7 +229,7 @@ class Resume(models.Model):
 
 class ResumeProjects(models.Model):
     project_name = models.CharField(max_length=225)
-    slug = models.SlugField()
+    resume_slug = models.SlugField()
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -240,23 +240,34 @@ class ResumeAwardsAndAchievements(models.Model):
     award_achievement_name = models.CharField(max_length=150)
     initial_date = models.DateField()
     final_date = models.DateField()
-    duration = models.DurationField()
+    duration = models.DurationField(blank=True, null=True)
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
 
     def __str__(self):
-        return award_achievement_name
+        return self.award_achievement_name
 
 
 class ProjectNotes(models.Model):
     # all possible notes for both our Projects and Resume Projects
     init_notes = models.TextField(max_length=500, blank=True, null=True)
     final_notes = models.TextField(max_length=500, blank=True, null=True)
-    project_notes = models.TextField(max_length=700, blank=True, null=True)
+    project_notes = models.TextField(max_length=700)
 
-    # two different foreign keys with blanks as possible values for us to choose which model to link it to
+    """
+        # two different foreign keys with blanks as possible values for us to choose which model to link it to
+        
+        NOTE: none of these fields are required which allows us to POST something blank but we'll take care of that 
+        in our serializers to make sure that at least project or resume project is filled  for us to 
+        know which notes this instance belongs to 
+    """
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="proj_notes",blank=True, null=True)
-    resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, blank=True, null=True)
+    resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, related_name="resume_proj_notes", blank=True, null=True)
 
 
     def __str__(self):
-        return f"{self.project.proj_name}-{self.id}"
+        if self.project:
+            return f"{self.project.proj_name}-{self.id}"
+        elif self.resume_project:
+            return f"{self.resume_project.project_name}-{self.id}"
+        else:
+            return "testing"
