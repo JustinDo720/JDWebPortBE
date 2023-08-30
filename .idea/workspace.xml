@@ -3,10 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/commands/__pycache__/add_data.cpython-311.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/commands/__pycache__/add_data.cpython-311.pyc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/management/commands/add_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/commands/add_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/commands/remove_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/commands/remove_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -168,7 +172,21 @@
       <workItem from="1690675399752" duration="3137000" />
       <workItem from="1691000243642" duration="613000" />
       <workItem from="1691000897633" duration="9861000" />
-      <workItem from="1691105783328" duration="9385000" />
+      <workItem from="1691105783328" duration="9975000" />
+      <workItem from="1691132935737" duration="5000" />
+      <workItem from="1691412981370" duration="14488000" />
+      <workItem from="1691590490352" duration="53000" />
+      <workItem from="1691946295943" duration="25049000" />
+      <workItem from="1692286681045" duration="13804000" />
+      <workItem from="1692315990047" duration="3140000" />
+      <workItem from="1692651428184" duration="720000" />
+      <workItem from="1692717634059" duration="17498000" />
+      <workItem from="1692766613731" duration="3959000" />
+      <workItem from="1692985161174" duration="3191000" />
+      <workItem from="1693009520369" duration="1847000" />
+      <workItem from="1693259029386" duration="612000" />
+      <workItem from="1693280523590" duration="9271000" />
+      <workItem from="1693365669881" duration="924000" />
     </task>
     <servers />
   </component>

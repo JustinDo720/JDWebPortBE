@@ -59,10 +59,57 @@ class Biography(models.Model):
         verbose_name = "Biographies"
 
     def get_short_bio_description(self):    # this will be displayed on the front page near "see more"
-        return f'{self.bio_description[:100]}...'
+        return f'{self.bio_description[:350]}...'
 
     def __str__(self):
         return self.get_short_bio_description()
+
+
+class BiographySection(models.Model):
+    section_name = models.CharField(max_length=100)
+    section_info = models.TextField(max_length=500)
+    biography = models.ForeignKey(Biography, related_name="bio_section", on_delete=models.CASCADE)
+    section_slug = models.SlugField(max_length=100, unique=True, blank=True)
+
+    def _get_unique_slug(self):
+        slug = slugify(self.section_name)
+        unique_slug = f'{slug}'
+        counter = 1
+        # important 6 hour debug problem: MUST USE FILTER because matching query will not EXIST
+        while BiographySection.objects.filter(section_slug=unique_slug).exists():
+            unique_slug = f'{unique_slug}-{counter}'
+            counter += 1
+            return unique_slug
+        return unique_slug
+
+    def save(self, *args, **kwargs):
+        if not self.section_slug:
+            self.section_slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.section_name
+
+
+class BiographySectionImage(models.Model):
+    biography_section = models.ForeignKey(BiographySection, related_name='bio_imgs',on_delete=models.CASCADE)
+    section_img = models.ImageField(upload_to='section_img/')
+    section_img_slug = models.SlugField(max_length=100, unique=True, blank=True)
+
+    def _get_unique_slug(self):
+        slug = slugify(self.biography_section)
+        unique_slug = f'{slug}-img'
+        counter = 1
+        while BiographySectionImage.objects.filter(section_img_slug=unique_slug).exists():
+            unique_slug = f'{unique_slug}-{counter}'
+            counter += 1
+            return unique_slug
+        return unique_slug
+
+    def save(self, *args, **kwargs):
+        if not self.section_img_slug:
+            self.section_img_slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
 
 
 # Recent Projects instead of Current Projects
@@ -70,6 +117,21 @@ class CurrProj(models.Model):
     focus_title = models.CharField(max_length=255)
     focus_date = models.DateField()
     focus_info = models.TextField(max_length=500)
+    curr_proj_slug = models.SlugField(max_length=100, unique=True, blank=True)
+
+    def _get_unique_slug(self):
+        slug = slugify(self.focus_title)
+        unique_slug = slug
+        number = 1
+        while CurrProj.objects.filter(curr_proj_slug=unique_slug).exists():
+            unique_slug = f'{slug}-{number}'
+            number += 1
+        return unique_slug
+
+    def save(self, *args, **kwargs):
+        if not self.curr_proj_slug:
+            self.curr_proj_slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.focus_title
@@ -124,8 +186,8 @@ class Project(models.Model):
 
 class ContactMe(models.Model):
     user_email = models.EmailField(max_length=300, blank=False)
-    user_first_name = models.CharField(max_length=30, blank=False)
-    user_last_name = models.CharField(max_length=30, blank=False)
+    user_first_name = models.CharField(max_length=30, blank=True, null=True)
+    user_last_name = models.CharField(max_length=30, blank=True, null=True)
     user_files = models.FileField(upload_to="contact_files/", blank=True, null=True)
     user_inquiry = models.TextField(max_length=500, blank=False)
     inquiry_date = models.DateTimeField(auto_now_add=True)
@@ -137,7 +199,7 @@ class ContactMe(models.Model):
         ('connect', "Connect With Me"),
         ('feedback', "General/Website Feedback"),
     ]
-    user_purpose = models.CharField(max_length=10, choices=PURPOSE_CHOICES, default='connect')
+    user_purpose = models.CharField(max_length=10, choices=PURPOSE_CHOICES, default='connect', blank=False, null=False)
 
 
     class Meta:
@@ -165,7 +227,6 @@ class Feedback(models.Model):
         user_email = models.CharField(max_length=200, blank=False, null=False)
         user_fb_desc = models.TextField(max_length=500, blank=False, null=False)  # required
         user_web_fb_ans = models.CharField(max_length=300, blank=True, null=True)
-
 
         def get_feedback_statements(self):
             return [
@@ -229,11 +290,37 @@ class Resume(models.Model):
 
 class ResumeProjects(models.Model):
     project_name = models.CharField(max_length=225)
-    resume_slug = models.SlugField()
-    resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
+    resume_slug = models.SlugField(max_length=100, unique=True, blank=True)
+    resume = models.ForeignKey(Resume, related_name="resume_project", on_delete=models.CASCADE) # reverse key lookup to tie into one resume API
+
+    def _get_unique_slug(self):
+        # we're going to get a unique slug using slugify
+        slug = slugify(self.project_name)
+        unique_slug = slug
+        slug_counter = 1 # this counter helps us avoid similar named slugs
+        while ResumeProjects.objects.filter(resume_slug=unique_slug).exists():  # important to use while for looping
+            unique_slug = f'{unique_slug}-{slug_counter}'
+            slug_counter += 1
+        return unique_slug
+
+
+    def save(self,*args, **kwargs):
+        if not self.resume_slug:
+            self.resume_slug = self._get_unique_slug()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.project_name
+
+
+class ResumeProjectDetails(models.Model):
+    # the info would be the bullet points for our resume
+    info = models.TextField(max_length=500,blank=False, null=False)
+    resume_project = models.ForeignKey(ResumeProjects, related_name="resume_proj_details", on_delete=models.CASCADE)
+
+    def __str__(self):
+        # flag worthy
+        return self.resume_project.project_name + " " + self.info[:30] + "..."
 
 
 class ResumeAwardsAndAchievements(models.Model):
@@ -241,7 +328,7 @@ class ResumeAwardsAndAchievements(models.Model):
     initial_date = models.DateField()
     final_date = models.DateField()
     duration = models.DurationField(blank=True, null=True)
-    resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
+    resume = models.ForeignKey(Resume, related_name="resume_award_achievement",on_delete=models.CASCADE)    # reverse key lookup to tie into one resume API
 
     def __str__(self):
         return self.award_achievement_name
@@ -251,7 +338,7 @@ class ProjectNotes(models.Model):
     # all possible notes for both our Projects and Resume Projects
     init_notes = models.TextField(max_length=500, blank=True, null=True)
     final_notes = models.TextField(max_length=500, blank=True, null=True)
-    project_notes = models.TextField(max_length=700)
+    project_notes = models.TextField(max_length=700)    # the project notes here would be the projects purpose on the front end
 
     """
         # two different foreign keys with blanks as possible values for us to choose which model to link it to

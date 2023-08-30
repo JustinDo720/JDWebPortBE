@@ -7,7 +7,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .pagination import ProjectResultsSetPagination, ContactMeResultsSetPagination, ResumeProjectPagination, ResumeAwardsAndAchievementsPagination
 from rest_framework import permissions
+from rest_framework.parsers import MultiPartParser
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import Http404
 import datetime
 
 
@@ -51,7 +53,7 @@ class BiographyAPI(APIView):
         try:
             bio_query = Biography.objects.latest('id')  # we want to get the latest id in case we del id=1 row
         except Exception:
-            bio_query = None
+            bio_query = Biography.objects.all()
         serializer = BiographySerializer(bio_query)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -85,6 +87,95 @@ def delete_biography(request, bio_id):
     bio_query = Biography.objects.get(id=bio_id)
     bio_query.delete()
     return Response({'message': 'Your biography has been deleted'}, status=status.HTTP_200_OK)
+
+
+class BiographySectionAPI(generics.ListCreateAPIView):
+    queryset = BiographySection.objects.all()
+    serializer_class = BiographySectionSerializer
+
+    # ONly necessary for post requests for all users
+    # permission_classes = [permissions.AllowAny] we don't need this because we have our default permission.
+    def create(self, request, *args, **kwargs):
+        if Biography.objects.count() >= 1:
+            request.data['biography'] = Biography.objects.all().latest('id').id
+        else:
+            return Response({'msg': "Please create a Biography instance first before creating sections"}, status=status.HTTP_200_OK)
+        serializer = BiographySectionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateBiographySectionAPI(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'section_slug'
+
+    def get_queryset(self, *args, **kwargs):
+        try:
+            bio_sec = BiographySection.objects.get(section_slug=self.kwargs.get('section_slug'))
+            return bio_sec
+        except BiographySection.DoesNotExist:
+            raise Http404   # raising http404 if it doesnt exist is better than passing a queryset...
+
+    def retrieve(self, request, *args, **kwargs):
+        bio_sec = self.get_queryset()
+        serializer = BiographySectionSerializer(bio_sec)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        bio_sec = self.get_queryset()
+        serializer = BiographySectionSerializer(bio_sec, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        bio_sec = self.get_queryset()
+        bio_sec.delete()
+        return Response({'message': 'Your Biography Section has been deleted'}, status=status.HTTP_200_OK)
+
+
+class BiographySectionImgAPI(APIView):
+    def get(self, request):
+        biography_img = BiographySectionImage.objects.all()
+        serializer = BiographySectionImgSerializer(biography_img, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = BiographySectionImgSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateBiographySectionImgAPI(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'section_img_slug'
+    serializer_class = BiographySectionImgSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        section_img_slug = self.kwargs.get('section_img_slug')
+        bio_sec_img = BiographySectionImage.objects.get(section_img_slug=section_img_slug)
+        return bio_sec_img # return some query based off our proj slug
+
+    def retrieve(self, request, *args, **kwargs):
+        bio_sec_img = self.get_queryset()
+        serializer = BiographySectionImgSerializer(bio_sec_img)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        bio_sec_img = self.get_queryset()
+        serializer = BiographySectionImgSerializer(bio_sec_img, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        bio_sec_img = self.get_queryset()
+        bio_sec_img.delete()
+        return Response({'message': 'Your Biography Image has been deleted'}, status=status.HTTP_200_OK)
 
 
 class ViewAndCreateProjectsAPI(generics.ListCreateAPIView):
@@ -133,7 +224,11 @@ class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
     # creating the update function
     def update(self, request, *args, **kwargs):
         proj_obj = self.get_queryset()
-        serializer = ProjectSerializer(proj_obj, data=request.data)
+        if request.data.get('proj_name', None):
+            # get another slug because the slug changes with the title
+            new_slug = proj_obj._get_unique_slug()
+            request.data['proj_slug'] = new_slug
+        serializer = ProjectSerializer(proj_obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -158,6 +253,7 @@ def view_all_contact_mes(request):
 
 
 class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
+    parser_classes = (MultiPartParser,)
     """
     View Contact Mes that are incomplete in our database
         * this is allowed for everyone to see
@@ -169,6 +265,13 @@ class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
     serializer_class = ContactMeSerializer
     pagination_class = ContactMeResultsSetPagination
     permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = ContactMeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -227,6 +330,7 @@ def view_create_update_profile(request):
     elif request.method == 'POST' and Profile.objects.count() >= 1:
         return Response({'msg': "We only accept one Profile Instance"}, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'GET':
+        permission_classes = [permissions.AllowAny]
         profile_query = Profile.objects.latest('id')
         profile_serializer = ProfileSerializer(profile_query)
         return Response(profile_serializer.data, status=status.HTTP_200_OK)
@@ -343,6 +447,10 @@ class UpdateResumeProjectsAPI(generics.RetrieveUpdateDestroyAPIView): # Retrieve
         # since we have one resume we could include that to streamline our post process
         request.data['resume'] = Resume.objects.latest('id').id
         resume_project = ResumeProjects.objects.get(resume_slug=self.kwargs["resume_slug"])
+        if request.data.get('project_name', None):
+            # get another slug because the slug changes with the title
+            new_slug = resume_project._get_unique_slug()
+            request.data['resume_slug'] = new_slug
         resume_project_serializer = ResumeProjectsSerializer(resume_project, data=request.data, partial=True)
         if resume_project_serializer.is_valid():
             resume_project_serializer.save()
@@ -405,6 +513,57 @@ class ViewAndCreateResumeAwardsAndAchievementsAPI(generics.ListCreateAPIView):
         return Response(resume_awards_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ViewAndCreateResumeProjectDetailsAPI(APIView):
+    # Focus on creating and ALL viewing the project details
+    def get(self, request):
+        query = ResumeProjectDetails.objects.all()
+        serializer = ResumeProjectDetailsSerializer(query, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = ResumeProjectDetailsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def update_resume_project_details(request,resume_project_id):
+    # viewing specific project detail
+    query = ResumeProjectDetails.objects.get(id=resume_project_id)
+    if request.method == "GET":
+        serializer = ResumeProjectDetailsSerializer(query)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serializer = ResumeProjectDetailsSerializer(query, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        query.delete()
+        return Response({'msg': f"Removed Details for: {query.resume_project.project_name}"}) # flag worthy
+
+
+class ViewFeedbackQuestionAPI(APIView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            latest_fb = Feedback.objects.latest('id')
+            latest_fb_question = FeedbackQuestionSerializer(latest_fb)
+            return Response(latest_fb_question.data, status=status.HTTP_200_OK)
+        except Feedback.DoesNotExist:
+            default_data = {
+                "user_email": "random@default.com",
+                "user_fb_desc": "Default Description for question queries"
+            }
+            new_fb_obj = Feedback.objects.create(user_email=default_data['user_email'], user_fb_desc=default_data['user_fb_desc'])
+            new_fb_obj.save()
+            latest_fb_question = FeedbackQuestionSerializer(new_fb_obj)
+            return Response(latest_fb_question.data, status=status.HTTP_200_OK)
+
+
 class ViewAndCreateFeedbackAPI(generics.ListCreateAPIView):
     queryset = Feedback.objects.all()
     serializer_class = FeedbackSerializer
@@ -415,7 +574,35 @@ class ViewAndCreateFeedbackAPI(generics.ListCreateAPIView):
 class ViewAndCreateCurrProjAPI(generics.ListCreateAPIView):
     queryset = CurrProj.objects.all()[:3]
     serializer_class = CurrProjSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
+
+    def get_permissions(self):  # method works must apply to others
+        method = self.request.method
+        if method == 'POST':
+           return [permissions.IsAuthenticated()]
+        else:
+           return [permissions.AllowAny()]
+
+
+class UpdateCurrProjAPI(APIView):
+    def put(self, request, *args, **kwargs):
+        curr_proj_slug = self.kwargs.get('curr_proj_slug')
+        curr_proj = CurrProj.objects.get(curr_proj_slug=curr_proj_slug)
+        if request.data.get('focus_title', None):
+            # get another slug because the slug changes with the title
+            new_slug = curr_proj._get_unique_slug()
+            request.data['curr_proj_slug'] = new_slug
+        serializers = CurrProjSerializer(curr_proj, data=request.data, partial=True)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status=status.HTTP_200_OK)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        curr_proj_slug = request.data['curr_proj_slug']
+        curr_proj = CurrProj.objects.get(curr_proj_slug=curr_proj_slug)
+        curr_proj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ViewAndCreateProjNotesAPI(APIView):

@@ -450,7 +450,7 @@ class Command(BaseCommand):
         if 'proj' in model and 'curr' not in model and 'notes' not in model and 'resume' not in model:
             project_instance()
         elif 'resume' in model and 'proj' in model:
-            ResumeProjects.objects.all().delete()
+            resume_projects_instance()
         elif 'profile' in model and 'social' not in model:
             profile_instance()
         elif 'bio' in model:
