@@ -11,10 +11,13 @@ our_models = [
     Profile,
     ProjectNotes,
     ResumeProjects,
+    ResumeProjectDetails,
     Resume,
     ResumeAwardsAndAchievements,
     CurrProj,
     Feedback,
+    BiographySection,
+    BiographySectionImage,
 ]
 
 admin.site.register(model for model in our_models)
