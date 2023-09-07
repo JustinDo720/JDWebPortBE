@@ -145,8 +145,32 @@ class ProjectNotesSerializer(serializers.ModelSerializer):
         # validators = [ProjNotesRequirement()]
 
 
+class ProjectImgSerializer(serializers.ModelSerializer):
+    # just needed to local testing but we're going to remove it because images are eventually going to be in storage
+    proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+
+    def get_proj_img_url(self, obj):
+        request = self.context.get('request')
+        if obj.project_image:
+            print(request.build_absolute_uri(obj.get_image_url()))
+            return request.build_absolute_uri(obj.get_image_url())
+        else:
+            return None
+
+    class Meta:
+        model = ProjectImage
+        fields = (
+            'id',
+            'project',
+            'project_image_slug',
+            'project_image',
+            'proj_img_url',
+        )
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+    proj_imgs = ProjectImgSerializer(many=True, allow_null=True, required=False)
     proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
     learnings = serializers.SerializerMethodField('get_learnings')
     tools = serializers.SerializerMethodField('get_tools')
@@ -165,15 +189,21 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'proj_name',
-            'proj_img',
+            'proj_purpose',
+            'proj_img',  # thumbnails or default project image
+            'proj_imgs', # slideshow images
             'proj_img_url',
             'proj_description',
+            'proj_brief_description',
             'proj_url',
             'proj_notes',
             'proj_date',
             'showcasing',
             'showcasing_url',
             'proj_slug',
+            # must include learnings and tools ofr us to send a PUT request to these fields
+            'proj_learnings',
+            'proj_tools',
             'learnings',
             'tools',
         )
@@ -252,8 +282,15 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
             Test endpoints and functionality for correct API response returns
     """
 
-    resume_proj_details = ResumeProjectDetailsSerializer(many=True, allow_null=True, required=False)
+    resume_proj_details_display = serializers.SerializerMethodField('get_resume_proj_details')
     resume_proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
+
+    def get_resume_proj_details(self, obj):
+        # given the objects id we could filter and find all details
+        resume_proj_details = obj.resume_proj_details.all()
+        if resume_proj_details.count() > 0:
+            info = [details.info for details in resume_proj_details] # we have a list of information for us to return
+            return info
 
     class Meta:
         model = ResumeProjects
@@ -262,7 +299,8 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
             'project_name',
             'resume_slug',
             'resume',
-            'resume_proj_details',
+            'resume_proj_details_display',
+            # 'resume_proj_details',
             'resume_proj_notes',
         )
 

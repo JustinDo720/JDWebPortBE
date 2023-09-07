@@ -218,7 +218,7 @@ class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
     # creating the retrieve function
     def retrieve(self, request, *args, **kwargs):
         proj_obj = self.get_queryset()
-        serializer = ProjectSerializer(proj_obj)
+        serializer = ProjectSerializer(proj_obj, context={'request':request}) # context may not be necessary for production
         return Response(serializer.data)
 
     # creating the update function
@@ -228,7 +228,7 @@ class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
             # get another slug because the slug changes with the title
             new_slug = proj_obj._get_unique_slug()
             request.data['proj_slug'] = new_slug
-        serializer = ProjectSerializer(proj_obj, data=request.data, partial=True)
+        serializer = ProjectSerializer(proj_obj, data=request.data, partial=True, context={'request':request}) # context may not be necessary for production
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -626,6 +626,47 @@ class UpdateProjNotesAPI(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectNotesSerializer
     lookup_field = 'proj_notes_id'
 
+
+class ViewAndCreateProjImgAPI(APIView):
+
+    def get(self, request):
+        proj_img_query = ProjectImage.objects.all()
+        # context may not be necessary for production
+        serializer = ProjectImgSerializer(proj_img_query, many=True, context={"request": request})  # Dont forget many=True
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = ProjectImgSerializer(data=request.data, context={"request": request}) # context may not be necessary for production
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateProjImgAPI(generics.RetrieveUpdateDestroyAPIView):
+
+    def _get_project_image(self, request, *args, **kwargs):
+        slug = self.kwargs.get('project_image_slug')
+        proj_img_obj = ProjectImage.objects.get(slug=slug)
+        return proj_img_obj
+
+    def retrieve(self, request, *args, **kwargs):
+        proj_img_obj = self._get_project_image(request, *args, **kwargs)
+        serializer = ProjectImgSerializer(proj_img_obj, context={"request": request}) # context may not be necessary for production
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        proj_img_obj = self._get_project_image(request, *args, **kwargs)
+        serializer = ProjectImgSerializer(proj_img_obj, data=request.data, partial=True, context={"request": request}) # context may not be necessary for production
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def destroy(self, request, *args, **kwargs):
+        proj_img_obj = self._get_project_image(request, *args, **kwargs)
+        proj_img_obj.delete()
+        return Response({'msg': 'Removed Image'})
 
 
 

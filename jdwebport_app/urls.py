@@ -39,6 +39,7 @@ urlpatterns = [
     # NEED TESTING VIEWS
     path('resume/project_details/', views.ViewAndCreateResumeProjectDetailsAPI.as_view()),  # Create and view all Resume Project Details
     path('resume/project_details/<int:resume_project_id>/', views.update_resume_project_details),    # update, delete and view specific Resume Project Details
-
+    path('projects/images/', views.ViewAndCreateProjImgAPI.as_view()),
+    path('projects/images/<slug:project_image_slug>/', views.UpdateProjImgAPI.as_view())
 
 ]

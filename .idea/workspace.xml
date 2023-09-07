@@ -3,15 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/commands/__pycache__/add_data.cpython-311.pyc" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/commands/__pycache__/add_data.cpython-311.pyc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/management/commands/add_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/management/commands/add_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +38,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/jdwebport_project" />
-    <property name="settings.editor.selected.configurable" value="terminal" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -186,7 +181,12 @@
       <workItem from="1693009520369" duration="1847000" />
       <workItem from="1693259029386" duration="612000" />
       <workItem from="1693280523590" duration="9271000" />
-      <workItem from="1693365669881" duration="924000" />
+      <workItem from="1693365669881" duration="5145000" />
+      <workItem from="1693786049098" duration="5789000" />
+      <workItem from="1693865147110" duration="643000" />
+      <workItem from="1693966505960" duration="5062000" />
+      <workItem from="1694021959019" duration="9789000" />
+      <workItem from="1694042059135" duration="11998000" />
     </task>
     <servers />
   </component>

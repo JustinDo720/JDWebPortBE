@@ -79,7 +79,6 @@ class BiographySection(models.Model):
         while BiographySection.objects.filter(section_slug=unique_slug).exists():
             unique_slug = f'{unique_slug}-{counter}'
             counter += 1
-            return unique_slug
         return unique_slug
 
     def save(self, *args, **kwargs):
@@ -93,7 +92,7 @@ class BiographySection(models.Model):
 
 class BiographySectionImage(models.Model):
     biography_section = models.ForeignKey(BiographySection, related_name='bio_imgs',on_delete=models.CASCADE)
-    section_img = models.ImageField(upload_to='section_img/')
+    section_img = models.ImageField(upload_to='section_imgs/')
     section_img_slug = models.SlugField(max_length=100, unique=True, blank=True)
 
     def _get_unique_slug(self):
@@ -103,7 +102,6 @@ class BiographySectionImage(models.Model):
         while BiographySectionImage.objects.filter(section_img_slug=unique_slug).exists():
             unique_slug = f'{unique_slug}-{counter}'
             counter += 1
-            return unique_slug
         return unique_slug
 
     def save(self, *args, **kwargs):
@@ -141,6 +139,7 @@ class Project(models.Model):
     proj_name = models.CharField(max_length=100, blank=False, unique=True, null=False)
     proj_img = models.ImageField(upload_to='project_images/', blank=True, null=True)    # optional
     proj_description = models.TextField(max_length=500)
+    proj_brief_description = models.TextField(max_length=300)
     proj_purpose = models.TextField(max_length=500)
     proj_learnings = models.TextField(max_length=700, help_text="Comma Seperated")
     proj_tools = models.CharField(max_length=500, help_text="Comma Seperated")
@@ -173,7 +172,7 @@ class Project(models.Model):
 
     # method to be used in serializer for learnings and tools field
     def listify_field(self, field):
-        return field.split(',')
+        return [fd.strip() for fd in field.split(',')]
 
     def save(self, *args, **kwargs):
         if not self.proj_slug:
@@ -282,7 +281,7 @@ class Resume(models.Model):
 
     # Projects and Awards and Achievement ForeignKeys but we need to make the methods
     def listify_field(self, field):
-        return field.split(', ')
+        return [fd.strip() for fd in field.split(',')]
 
     def __str__(self):
         return self.school_name
@@ -358,3 +357,31 @@ class ProjectNotes(models.Model):
             return f"{self.resume_project.project_name}-{self.id}"
         else:
             return "testing"
+
+
+class ProjectImage(models.Model):
+    project_image_slug = models.SlugField(max_length=100, unique=True, blank=True)
+    project_image = models.ImageField(upload_to='project_imgs/')
+    project = models.ForeignKey(Project, related_name='proj_imgs', on_delete=models.CASCADE)
+
+    def _get_unique_projectimg_slug(self):
+        slug = slugify(self.project)
+        unique_slug = slug + '-img'
+        counter = 1
+        # check if theres this slug exists
+        while ProjectImage.objects.filter(project_image_slug=unique_slug).exists():
+            unique_slug = f'{unique_slug}-{counter}'
+            counter += 1
+        return unique_slug
+
+    def get_image_url(self):
+        return self.project_image.url if self.project_image else None
+
+    def save(self, *args, **kwargs):
+        if not self.project_image_slug:
+            self.project_image_slug = self._get_unique_projectimg_slug()
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.project_image_slug
