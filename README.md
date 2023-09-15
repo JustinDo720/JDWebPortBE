@@ -69,7 +69,12 @@
   - [x] Social Profiles Sub API
 - [x] Create Faker Scripts for sub API
 - [ ] Deploy
-  - [ ] Before we deploy make sure to update the API view route 
+  - [ ] Before we deploy make sure to update the API viewset route 
+    - [x] Profile Viewset (Profile, Socials Profile)
+    - [x] Biography Viewset (Biography, BiographySection, BiographySectionImage)
+    - [ ] Project Viewset (Project, CurrProj, ProjectNotes, ProjectImage)
+    - [ ] Resume Viewset (Resume, ResumeProjects, ResumeProjectDetails, ResumeAwardsandAchievement)
+    - [x] Feedback Viewset (Contact Me, Feedback)
   - [ ] Storage for Pictures (maybe use Google Cloud Storage again) 
   - [ ] I heard we could deploy with Google check that
   

@@ -5,7 +5,7 @@ urlpatterns = [
     # path('', views.index),
     # Biography view (change class-based generic view to a normal view)
     path('biography/', views.BiographyAPI.as_view()),
-    path('biography/section/', views.BiographySectionAPI.as_view()),
+    path('biography/section/', views.BiographySectionAPI.as_view(), name='bio_sec'),
     path('biography/section/<slug:section_slug>/', views.UpdateBiographySectionAPI.as_view(), name='bio_section'),
     path('biography/section-imgs/', views.BiographySectionImgAPI.as_view()),
     path('biography/section-imgs/<slug:section_img_slug>/', views.UpdateBiographySectionImgAPI.as_view(), name='bio_img'),

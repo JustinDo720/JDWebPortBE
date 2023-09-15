@@ -5,11 +5,13 @@ from django.http import JsonResponse
 
 
 class BiographySectionImgSerializer(serializers.HyperlinkedModelSerializer):
+    biography_image_url = serializers.HyperlinkedIdentityField(view_name='biographysectionimage-detail', format='html')
 
     class Meta:
         model = BiographySectionImage
         fields = (
             'id',
+            'biography_image_url',
             'biography_section',
             'section_img',
             'section_img_slug',
@@ -19,11 +21,14 @@ class BiographySectionImgSerializer(serializers.HyperlinkedModelSerializer):
 
 class BiographySectionSerializer(serializers.HyperlinkedModelSerializer):
     bio_imgs = BiographySectionImgSerializer(many=True, allow_null=True, required=False)
+    # view_name = <modelname>-detail (required)
+    biography_section_url = serializers.HyperlinkedIdentityField(view_name='biographysection-detail', format='html')
 
     class Meta:
         model = BiographySection
         fields = (
             'id',
+            'biography_section_url',
             'section_name',
             'section_info',
             'biography',
@@ -43,6 +48,7 @@ class BiographySerializer(serializers.HyperlinkedModelSerializer):
         model = Biography
         fields = (
             'id',
+            'url', # Hyperlinked default (HyperlinkedIdentityField(view_name='biography-detail')
             'bio_description',
             'bio_section',
             'bio_entry_date',
@@ -53,11 +59,14 @@ class BiographySerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class SocialsProfileSerializer(serializers.ModelSerializer):
+class SocialsProfileSerializer(serializers.HyperlinkedModelSerializer):
+    social_url = serializers.HyperlinkedIdentityField(view_name='socialsprofile-detail')
+
     class Meta:
         model = SocialsProfile
         fields = (
             'id',
+            'social_url',
             'social_name',
             'info',
             'info_link',
@@ -67,7 +76,7 @@ class SocialsProfileSerializer(serializers.ModelSerializer):
         )
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     # we're going to start validating the fields that require comma separated values
     def validate(self, data):
         if data.get('quick_description', None) is not None and ',' not in data.get('quick_description', None)\
@@ -80,6 +89,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     socials = SocialsProfileSerializer(many=True, allow_null=True, required=False)
     biography = BiographySerializer(many=True, allow_null=True, required=False)
     quick_desc = serializers.SerializerMethodField('get_quick_desc')
+    profile_url = serializers.HyperlinkedIdentityField(view_name='profile-detail', format='html')
 
     def get_quick_desc(self, profile_obj):
         listified_quick_desc = profile_obj.quick_description.replace(", ", ",").split(',')
@@ -87,10 +97,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'full_name', 'quick_description', 'quick_desc', 'socials', 'biography')
+        fields = ('id', 'profile_url', 'full_name', 'quick_description', 'quick_desc', 'socials', 'biography')
 
 
-class CurrProjSerializer(serializers.ModelSerializer):
+class CurrProjSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = CurrProj
         fields = (
@@ -213,16 +224,33 @@ class ProjectSerializer(serializers.ModelSerializer):
         return obj.listify_field(obj.proj_tools)
 
 
-class ContactMeSerializer(serializers.ModelSerializer):
+class ContactMeSerializer(serializers.HyperlinkedModelSerializer):
+    contact_me_url = serializers.HyperlinkedIdentityField(view_name='contactme-detail', format='html')
+
     class Meta:
         model = ContactMe
-        fields = "__all__"
+        fields = (
+            'id',
+            'contact_me_url',
+            'user_email',
+            'user_purpose',
+            'user_first_name',
+            'user_last_name',
+            'user_files',
+            'user_inquiry',
+            'inquiry_date',
+            'inquiry_accomplished',
+        )
 
 
-class FeedbackSerializer(serializers.ModelSerializer):
+class FeedbackSerializer(serializers.HyperlinkedModelSerializer):
+    feedback_url = serializers.HyperlinkedIdentityField(view_name='feedback-detail', format='html')
+
     class Meta:
         model = Feedback
         fields = (
+            'id',
+            'feedback_url',
             'feedback_option',
             'user_email',
             'user_fb_desc',
