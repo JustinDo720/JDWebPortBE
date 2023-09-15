@@ -4,11 +4,7 @@ from .models import *   # importing all models\
 from django.http import JsonResponse
 
 
-class BiographySectionImgSerializer(serializers.ModelSerializer):
-    # biography_section_slug = serializers.SerializerMethodField('get_biography_section_slug')
-    #
-    # def get_biography_section_slug(self):
-    #
+class BiographySectionImgSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = BiographySectionImage
@@ -21,7 +17,7 @@ class BiographySectionImgSerializer(serializers.ModelSerializer):
         )
 
 
-class BiographySectionSerializer(serializers.ModelSerializer):
+class BiographySectionSerializer(serializers.HyperlinkedModelSerializer):
     bio_imgs = BiographySectionImgSerializer(many=True, allow_null=True, required=False)
 
     class Meta:
@@ -36,7 +32,7 @@ class BiographySectionSerializer(serializers.ModelSerializer):
         )
 
 
-class BiographySerializer(serializers.ModelSerializer):
+class BiographySerializer(serializers.HyperlinkedModelSerializer):
     short_description = serializers.SerializerMethodField('get_short_description')
     bio_section = BiographySectionSerializer(many=True, allow_null=True, required=False)
 
@@ -152,7 +148,6 @@ class ProjectImgSerializer(serializers.ModelSerializer):
     def get_proj_img_url(self, obj):
         request = self.context.get('request')
         if obj.project_image:
-            print(request.build_absolute_uri(obj.get_image_url()))
             return request.build_absolute_uri(obj.get_image_url())
         else:
             return None

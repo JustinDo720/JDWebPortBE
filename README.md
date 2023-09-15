@@ -68,3 +68,8 @@
   - [x] Resume Awards & Achievements Sub API 
   - [x] Social Profiles Sub API
 - [x] Create Faker Scripts for sub API
+- [ ] Deploy
+  - [ ] Before we deploy make sure to update the API view route 
+  - [ ] Storage for Pictures (maybe use Google Cloud Storage again) 
+  - [ ] I heard we could deploy with Google check that
+  

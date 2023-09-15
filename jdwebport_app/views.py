@@ -17,21 +17,6 @@ import datetime
 # def index(request):
 #     return render(request, 'index.html')
 
-# View sets for the restframework page
-class BiographyViewSet(viewsets.ModelViewSet):
-    queryset = Biography.objects.all()
-    serializer_class = BiographySerializer
-
-
-class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-
-
-class ContactMeViewSet(viewsets.ModelViewSet):
-    queryset = ContactMe.objects.all()
-    serializer_class = ContactMeSerializer
-
 
 # Api endpoints to perform actions
 
@@ -322,7 +307,7 @@ def view_create_update_profile(request):
     """
     if request.method == 'POST' and Profile.objects.count() < 1:
         # like I said there could only be one Profile instance so we will post if the count is less than 1
-        serializers = ProfileSerializer(data=request.data)
+        serializers = ProfileSerializer(data=request.data, context={'request': request})
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_200_OK)
@@ -332,11 +317,11 @@ def view_create_update_profile(request):
     elif request.method == 'GET':
         permission_classes = [permissions.AllowAny]
         profile_query = Profile.objects.latest('id')
-        profile_serializer = ProfileSerializer(profile_query)
+        profile_serializer = ProfileSerializer(profile_query, context={'request': request})
         return Response(profile_serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         profile_query = Profile.objects.latest('id')
-        profile_serializer = ProfileSerializer(profile_query, data=request.data, partial=True)  # no full field validation check
+        profile_serializer = ProfileSerializer(profile_query, data=request.data, partial=True, context={'request': request})  # no full field validation check
         if profile_serializer.is_valid():
             profile_serializer.save()
             return Response(profile_serializer.data, status=status.HTTP_200_OK)
