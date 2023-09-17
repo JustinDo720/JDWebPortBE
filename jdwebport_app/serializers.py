@@ -101,10 +101,13 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CurrProjSerializer(serializers.HyperlinkedModelSerializer):
+    curr_proj_url = serializers.HyperlinkedIdentityField(view_name='currproj-detail', format='html')
 
     class Meta:
         model = CurrProj
         fields = (
+            'id',
+            'curr_proj_url',
             "focus_title",
             "focus_date",
             "focus_info",
@@ -122,7 +125,7 @@ class CurrProjSerializer(serializers.HyperlinkedModelSerializer):
 #             raise serializers.ValidationError(msg)
 
 
-class ProjectNotesSerializer(serializers.ModelSerializer):
+class ProjectNotesSerializer(serializers.HyperlinkedModelSerializer):
     # just remember resume project notes and normal project notes are included
     def validate(self,data):
         """
@@ -138,10 +141,13 @@ class ProjectNotesSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'message': msg})
         return data
 
+    project_notes_url = serializers.HyperlinkedIdentityField(view_name='projectnotes-detail', format='html')
+
     class Meta:
         model = ProjectNotes
         fields = (
             'id',
+            'project_notes_url',
             'init_notes',
             'final_notes',
             'project_notes',
@@ -152,9 +158,10 @@ class ProjectNotesSerializer(serializers.ModelSerializer):
         # validators = [ProjNotesRequirement()]
 
 
-class ProjectImgSerializer(serializers.ModelSerializer):
+class ProjectImgSerializer(serializers.HyperlinkedModelSerializer):
     # just needed to local testing but we're going to remove it because images are eventually going to be in storage
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+    project_img_url = serializers.HyperlinkedIdentityField(view_name='projectimage-detail', format='html')
 
     def get_proj_img_url(self, obj):
         request = self.context.get('request')
@@ -167,6 +174,7 @@ class ProjectImgSerializer(serializers.ModelSerializer):
         model = ProjectImage
         fields = (
             'id',
+            'project_img_url',
             'project',
             'project_image_slug',
             'project_image',
@@ -174,12 +182,13 @@ class ProjectImgSerializer(serializers.ModelSerializer):
         )
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
     proj_imgs = ProjectImgSerializer(many=True, allow_null=True, required=False)
     proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
     learnings = serializers.SerializerMethodField('get_learnings')
     tools = serializers.SerializerMethodField('get_tools')
+    project_url = serializers.HyperlinkedIdentityField(view_name='project-detail', format='html')
 
     def validate(self, data):
         if data.get('proj_learnings', None) is not None and ', ' not in data.get('proj_learnings', None):
@@ -194,6 +203,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = (
             'id',
+            'project_url',
             'proj_name',
             'proj_purpose',
             'proj_img',  # thumbnails or default project image
@@ -281,17 +291,20 @@ class POSTResumeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ResumeProjectDetailsSerializer(serializers.ModelSerializer):
+class ResumeProjectDetailsSerializer(serializers.HyperlinkedModelSerializer):
+    resume_project_details_url = serializers.HyperlinkedIdentityField(view_name='resumeprojectdetails-detail')
+
     class Meta:
         model = ResumeProjectDetails
         fields = (
             'id',
+            'resume_project_details_url',
             'info',
             'resume_project',
         )
 
 
-class ResumeProjectsSerializer(serializers.ModelSerializer):
+class ResumeProjectsSerializer(serializers.HyperlinkedModelSerializer):
     # in addition to the resume project notes, we also need to provide the project details
 
     """
@@ -307,6 +320,7 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
 
     resume_proj_details_display = serializers.SerializerMethodField('get_resume_proj_details')
     resume_proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
+    resume_proj_url = serializers.HyperlinkedIdentityField(view_name='resumeprojects-detail', format='html')
 
     def get_resume_proj_details(self, obj):
         # given the objects id we could filter and find all details
@@ -319,6 +333,7 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
         model = ResumeProjects
         fields = (
             'id',
+            'resume_proj_url',
             'project_name',
             'resume_slug',
             'resume',
@@ -328,11 +343,14 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
         )
 
 
-class ResumeAwardsAndAchievementsSerializer(serializers.ModelSerializer):
+class ResumeAwardsAndAchievementsSerializer(serializers.HyperlinkedModelSerializer):
+    resume_award_achievement_url = serializers.HyperlinkedIdentityField(view_name='resumeawardsandachievements-detail', format='html')
+
     class Meta:
         model = ResumeAwardsAndAchievements
         fields = (
             'id',
+            'resume_award_achievement_url',
             'award_achievement_name',
             'initial_date',
             'final_date',
@@ -349,6 +367,7 @@ class ResumeSerializer(serializers.ModelSerializer):
     lang = serializers.SerializerMethodField('get_lang')
     fw = serializers.SerializerMethodField('get_fw')
     tools = serializers.SerializerMethodField('get_tools')
+    resume_url = serializers.HyperlinkedIdentityField(view_name='resume-detail', format='html')
 
     # resume projects?
 
@@ -374,6 +393,7 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = ('id',
+                  'resume_url',
                   'profile',
                   'school_name',
                   'school_loc',

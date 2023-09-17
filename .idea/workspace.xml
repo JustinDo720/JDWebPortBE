@@ -5,7 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/viewsets.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/viewsets.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -192,7 +191,9 @@
       <workItem from="1694574076899" duration="2844000" />
       <workItem from="1694720690801" duration="18389000" />
       <workItem from="1694747571229" duration="1481000" />
-      <workItem from="1694772148112" duration="6346000" />
+      <workItem from="1694772148112" duration="6619000" />
+      <workItem from="1694839620155" duration="2360000" />
+      <workItem from="1694976983252" duration="4936000" />
     </task>
     <servers />
   </component>

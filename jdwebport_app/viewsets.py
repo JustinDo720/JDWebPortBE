@@ -18,32 +18,34 @@ from rest_framework.response import Response
         BiographySectionImage [x] 
             Completed w/ Hyperlink? [x]
         CurrProj [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         Project [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ContactMe [x] 
             Completed w/ Hyperlink? [x]
         Feedback [x] 
             Completed w/ Hyperlink? [x]
         Resume [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ResumeProjects [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ResumeProjectDetails [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ResumeAwardsAndAchievements [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ProjectNotes [x] 
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
         ProjectImage [x]
-            Completed w/ Hyperlink? [ ]
+            Completed w/ Hyperlink? [x]
 """
+
 
 # Profile Viewset
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    http_method_names = ['get', 'post', 'put', 'delete']
+    if Profile.objects.count() != 0:
+        http_method_names = ['get', 'put', 'delete', 'head']
 
 
 class SocialsProfileViewSet(viewsets.ModelViewSet):
@@ -93,6 +95,8 @@ class ProjectImageViewSet(viewsets.ModelViewSet):
 class ResumeViewSet(viewsets.ModelViewSet):
     queryset = Resume.objects.all()
     serializer_class = ResumeSerializer
+    if Resume.objects.count() != 0:
+        http_method_names = ['get', 'put', 'delete', 'head']
 
 
 class ResumeProjectsViewSet(viewsets.ModelViewSet):
