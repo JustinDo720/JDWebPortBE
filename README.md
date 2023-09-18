@@ -75,7 +75,7 @@
     - [x] Project Viewset (Project, CurrProj, ProjectNotes, ProjectImage)
     - [x] Resume Viewset (Resume, ResumeProjects, ResumeProjectDetails, ResumeAwardsandAchievement)
     - [x] Feedback Viewset (Contact Me, Feedback)
-  - [ ] Test API endpoints (we need to pass request in context for serializer)
+  - [x] Test API endpoints (we need to pass request in context for serializer)
   - [ ] Reconfigure new Database
   - [x] Storage for Pictures (maybe use Google Cloud Storage again) 
   - [ ] I heard we could deploy with Google check that

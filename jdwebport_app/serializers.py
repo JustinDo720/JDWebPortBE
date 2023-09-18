@@ -134,7 +134,7 @@ class ProjectNotesSerializer(serializers.HyperlinkedModelSerializer):
 
         # we need to use the get method to prevent KeyErrors .get(key, [default_value])
         if data.get('project', None) is None and data.get('resume_project', None) is None:
-            msg = "This Note instance must be associated with a Project ID or Resume Project ID"
+            msg = "This Note instance must be associated with a Project Hyperlink (project_notes) or Resume Project Hyperlink (resume_project)"
             raise serializers.ValidationError({'message':msg})
         elif data.get('project', None) is not None and data.get('resume_project', None) is not None:
             msg = "This Note instance must be associated with ONE Project ID or Resume Project ID... not both"
@@ -372,10 +372,11 @@ class ResumeSerializer(serializers.ModelSerializer):
     # resume projects?
 
     def validate(self, data):
-        if ', ' not in data.get('school_rel_courses', None) or ', ' not in data.get('skills_lang', None) \
-                or ', ' not in data.get('skills_fw', None) or ', ' not in data.get('skills_tools', None):
-            msg = "Please use comma separated values to indicate the amount of items you'd like to use in a string format"
-            raise serializers.ValidationError({'message':msg})
+        if data.get('school_rel_courses') or data.get('skills_lang') or data.get('skills_fw') or data.get('skills_tools'):
+            if ', ' not in data.get('school_rel_courses') or ', ' not in data.get('skills_lang') \
+                    or ', ' not in data.get('skills_fw') or ', ' not in data.get('skills_tools'):
+                msg = "Please use comma separated values to indicate the amount of items you'd like to use in a string format"
+                raise serializers.ValidationError({'message':msg})
         return data
 
     def get_rel_courses(self, resume):
