@@ -4,16 +4,14 @@ from .models import *   # importing all models\
 from django.http import JsonResponse
 
 
-class BiographySectionImgSerializer(serializers.ModelSerializer):
-    # biography_section_slug = serializers.SerializerMethodField('get_biography_section_slug')
-    #
-    # def get_biography_section_slug(self):
-    #
+class BiographySectionImgSerializer(serializers.HyperlinkedModelSerializer):
+    biography_image_url = serializers.HyperlinkedIdentityField(view_name='biographysectionimage-detail', format='html')
 
     class Meta:
         model = BiographySectionImage
         fields = (
             'id',
+            'biography_image_url',
             'biography_section',
             'section_img',
             'section_img_slug',
@@ -21,13 +19,16 @@ class BiographySectionImgSerializer(serializers.ModelSerializer):
         )
 
 
-class BiographySectionSerializer(serializers.ModelSerializer):
+class BiographySectionSerializer(serializers.HyperlinkedModelSerializer):
     bio_imgs = BiographySectionImgSerializer(many=True, allow_null=True, required=False)
+    # view_name = <modelname>-detail (required)
+    biography_section_url = serializers.HyperlinkedIdentityField(view_name='biographysection-detail', format='html')
 
     class Meta:
         model = BiographySection
         fields = (
             'id',
+            'biography_section_url',
             'section_name',
             'section_info',
             'biography',
@@ -36,7 +37,7 @@ class BiographySectionSerializer(serializers.ModelSerializer):
         )
 
 
-class BiographySerializer(serializers.ModelSerializer):
+class BiographySerializer(serializers.HyperlinkedModelSerializer):
     short_description = serializers.SerializerMethodField('get_short_description')
     bio_section = BiographySectionSerializer(many=True, allow_null=True, required=False)
 
@@ -47,6 +48,7 @@ class BiographySerializer(serializers.ModelSerializer):
         model = Biography
         fields = (
             'id',
+            'url', # Hyperlinked default (HyperlinkedIdentityField(view_name='biography-detail')
             'bio_description',
             'bio_section',
             'bio_entry_date',
@@ -57,11 +59,14 @@ class BiographySerializer(serializers.ModelSerializer):
         )
 
 
-class SocialsProfileSerializer(serializers.ModelSerializer):
+class SocialsProfileSerializer(serializers.HyperlinkedModelSerializer):
+    social_url = serializers.HyperlinkedIdentityField(view_name='socialsprofile-detail')
+
     class Meta:
         model = SocialsProfile
         fields = (
             'id',
+            'social_url',
             'social_name',
             'info',
             'info_link',
@@ -71,7 +76,7 @@ class SocialsProfileSerializer(serializers.ModelSerializer):
         )
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     # we're going to start validating the fields that require comma separated values
     def validate(self, data):
         if data.get('quick_description', None) is not None and ',' not in data.get('quick_description', None)\
@@ -84,6 +89,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     socials = SocialsProfileSerializer(many=True, allow_null=True, required=False)
     biography = BiographySerializer(many=True, allow_null=True, required=False)
     quick_desc = serializers.SerializerMethodField('get_quick_desc')
+    profile_url = serializers.HyperlinkedIdentityField(view_name='profile-detail', format='html')
 
     def get_quick_desc(self, profile_obj):
         listified_quick_desc = profile_obj.quick_description.replace(", ", ",").split(',')
@@ -91,13 +97,17 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'full_name', 'quick_description', 'quick_desc', 'socials', 'biography')
+        fields = ('id', 'profile_url', 'full_name', 'quick_description', 'quick_desc', 'socials', 'biography')
 
 
-class CurrProjSerializer(serializers.ModelSerializer):
+class CurrProjSerializer(serializers.HyperlinkedModelSerializer):
+    curr_proj_url = serializers.HyperlinkedIdentityField(view_name='currproj-detail', format='html')
+
     class Meta:
         model = CurrProj
         fields = (
+            'id',
+            'curr_proj_url',
             "focus_title",
             "focus_date",
             "focus_info",
@@ -115,7 +125,7 @@ class CurrProjSerializer(serializers.ModelSerializer):
 #             raise serializers.ValidationError(msg)
 
 
-class ProjectNotesSerializer(serializers.ModelSerializer):
+class ProjectNotesSerializer(serializers.HyperlinkedModelSerializer):
     # just remember resume project notes and normal project notes are included
     def validate(self,data):
         """
@@ -124,17 +134,20 @@ class ProjectNotesSerializer(serializers.ModelSerializer):
 
         # we need to use the get method to prevent KeyErrors .get(key, [default_value])
         if data.get('project', None) is None and data.get('resume_project', None) is None:
-            msg = "This Note instance must be associated with a Project ID or Resume Project ID"
+            msg = "This Note instance must be associated with a Project Hyperlink (project_notes) or Resume Project Hyperlink (resume_project)"
             raise serializers.ValidationError({'message':msg})
         elif data.get('project', None) is not None and data.get('resume_project', None) is not None:
             msg = "This Note instance must be associated with ONE Project ID or Resume Project ID... not both"
             raise serializers.ValidationError({'message': msg})
         return data
 
+    project_notes_url = serializers.HyperlinkedIdentityField(view_name='projectnotes-detail', format='html')
+
     class Meta:
         model = ProjectNotes
         fields = (
             'id',
+            'project_notes_url',
             'init_notes',
             'final_notes',
             'project_notes',
@@ -145,14 +158,14 @@ class ProjectNotesSerializer(serializers.ModelSerializer):
         # validators = [ProjNotesRequirement()]
 
 
-class ProjectImgSerializer(serializers.ModelSerializer):
+class ProjectImgSerializer(serializers.HyperlinkedModelSerializer):
     # just needed to local testing but we're going to remove it because images are eventually going to be in storage
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
+    project_img_url = serializers.HyperlinkedIdentityField(view_name='projectimage-detail', format='html')
 
     def get_proj_img_url(self, obj):
         request = self.context.get('request')
         if obj.project_image:
-            print(request.build_absolute_uri(obj.get_image_url()))
             return request.build_absolute_uri(obj.get_image_url())
         else:
             return None
@@ -161,6 +174,7 @@ class ProjectImgSerializer(serializers.ModelSerializer):
         model = ProjectImage
         fields = (
             'id',
+            'project_img_url',
             'project',
             'project_image_slug',
             'project_image',
@@ -168,12 +182,13 @@ class ProjectImgSerializer(serializers.ModelSerializer):
         )
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     proj_img_url = serializers.SerializerMethodField('get_proj_img_url')
     proj_imgs = ProjectImgSerializer(many=True, allow_null=True, required=False)
     proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
     learnings = serializers.SerializerMethodField('get_learnings')
     tools = serializers.SerializerMethodField('get_tools')
+    project_url = serializers.HyperlinkedIdentityField(view_name='project-detail', format='html')
 
     def validate(self, data):
         if data.get('proj_learnings', None) is not None and ', ' not in data.get('proj_learnings', None):
@@ -188,6 +203,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = (
             'id',
+            'project_url',
             'proj_name',
             'proj_purpose',
             'proj_img',  # thumbnails or default project image
@@ -218,16 +234,33 @@ class ProjectSerializer(serializers.ModelSerializer):
         return obj.listify_field(obj.proj_tools)
 
 
-class ContactMeSerializer(serializers.ModelSerializer):
+class ContactMeSerializer(serializers.HyperlinkedModelSerializer):
+    contact_me_url = serializers.HyperlinkedIdentityField(view_name='contactme-detail', format='html')
+
     class Meta:
         model = ContactMe
-        fields = "__all__"
+        fields = (
+            'id',
+            'contact_me_url',
+            'user_email',
+            'user_purpose',
+            'user_first_name',
+            'user_last_name',
+            'user_files',
+            'user_inquiry',
+            'inquiry_date',
+            'inquiry_accomplished',
+        )
 
 
-class FeedbackSerializer(serializers.ModelSerializer):
+class FeedbackSerializer(serializers.HyperlinkedModelSerializer):
+    feedback_url = serializers.HyperlinkedIdentityField(view_name='feedback-detail', format='html')
+
     class Meta:
         model = Feedback
         fields = (
+            'id',
+            'feedback_url',
             'feedback_option',
             'user_email',
             'user_fb_desc',
@@ -258,17 +291,20 @@ class POSTResumeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ResumeProjectDetailsSerializer(serializers.ModelSerializer):
+class ResumeProjectDetailsSerializer(serializers.HyperlinkedModelSerializer):
+    resume_project_details_url = serializers.HyperlinkedIdentityField(view_name='resumeprojectdetails-detail')
+
     class Meta:
         model = ResumeProjectDetails
         fields = (
             'id',
+            'resume_project_details_url',
             'info',
             'resume_project',
         )
 
 
-class ResumeProjectsSerializer(serializers.ModelSerializer):
+class ResumeProjectsSerializer(serializers.HyperlinkedModelSerializer):
     # in addition to the resume project notes, we also need to provide the project details
 
     """
@@ -284,6 +320,7 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
 
     resume_proj_details_display = serializers.SerializerMethodField('get_resume_proj_details')
     resume_proj_notes = ProjectNotesSerializer(many=True, allow_null=True, required=False)
+    resume_proj_url = serializers.HyperlinkedIdentityField(view_name='resumeprojects-detail', format='html')
 
     def get_resume_proj_details(self, obj):
         # given the objects id we could filter and find all details
@@ -296,6 +333,7 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
         model = ResumeProjects
         fields = (
             'id',
+            'resume_proj_url',
             'project_name',
             'resume_slug',
             'resume',
@@ -305,11 +343,14 @@ class ResumeProjectsSerializer(serializers.ModelSerializer):
         )
 
 
-class ResumeAwardsAndAchievementsSerializer(serializers.ModelSerializer):
+class ResumeAwardsAndAchievementsSerializer(serializers.HyperlinkedModelSerializer):
+    resume_award_achievement_url = serializers.HyperlinkedIdentityField(view_name='resumeawardsandachievements-detail', format='html')
+
     class Meta:
         model = ResumeAwardsAndAchievements
         fields = (
             'id',
+            'resume_award_achievement_url',
             'award_achievement_name',
             'initial_date',
             'final_date',
@@ -326,14 +367,16 @@ class ResumeSerializer(serializers.ModelSerializer):
     lang = serializers.SerializerMethodField('get_lang')
     fw = serializers.SerializerMethodField('get_fw')
     tools = serializers.SerializerMethodField('get_tools')
+    resume_url = serializers.HyperlinkedIdentityField(view_name='resume-detail', format='html')
 
     # resume projects?
 
     def validate(self, data):
-        if ', ' not in data.get('school_rel_courses', None) or ', ' not in data.get('skills_lang', None) \
-                or ', ' not in data.get('skills_fw', None) or ', ' not in data.get('skills_tools', None):
-            msg = "Please use comma separated values to indicate the amount of items you'd like to use in a string format"
-            raise serializers.ValidationError({'message':msg})
+        if data.get('school_rel_courses') or data.get('skills_lang') or data.get('skills_fw') or data.get('skills_tools'):
+            if ', ' not in data.get('school_rel_courses') or ', ' not in data.get('skills_lang') \
+                    or ', ' not in data.get('skills_fw') or ', ' not in data.get('skills_tools'):
+                msg = "Please use comma separated values to indicate the amount of items you'd like to use in a string format"
+                raise serializers.ValidationError({'message':msg})
         return data
 
     def get_rel_courses(self, resume):
@@ -351,6 +394,7 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = ('id',
+                  'resume_url',
                   'profile',
                   'school_name',
                   'school_loc',

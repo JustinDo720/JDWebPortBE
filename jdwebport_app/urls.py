@@ -5,10 +5,10 @@ urlpatterns = [
     # path('', views.index),
     # Biography view (change class-based generic view to a normal view)
     path('biography/', views.BiographyAPI.as_view()),
-    path('biography/section/', views.BiographySectionAPI.as_view()),
-    path('biography/section/<slug:section_slug>/', views.UpdateBiographySectionAPI.as_view()),
+    path('biography/section/', views.BiographySectionAPI.as_view(), name='bio_sec'),
+    path('biography/section/<slug:section_slug>/', views.UpdateBiographySectionAPI.as_view(), name='bio_section'),
     path('biography/section-imgs/', views.BiographySectionImgAPI.as_view()),
-    path('biography/section-imgs/<slug:section_img_slug>/', views.UpdateBiographySectionImgAPI.as_view()),
+    path('biography/section-imgs/<slug:section_img_slug>/', views.UpdateBiographySectionImgAPI.as_view(), name='bio_img'),
     path('biography/delete_biography/<int:bio_id>/', views.delete_biography, name='delete_biography'),
 
     # Project view
@@ -40,6 +40,7 @@ urlpatterns = [
     path('resume/project_details/', views.ViewAndCreateResumeProjectDetailsAPI.as_view()),  # Create and view all Resume Project Details
     path('resume/project_details/<int:resume_project_id>/', views.update_resume_project_details),    # update, delete and view specific Resume Project Details
     path('projects/images/', views.ViewAndCreateProjImgAPI.as_view()),
-    path('projects/images/<slug:project_image_slug>/', views.UpdateProjImgAPI.as_view())
+    path('projects/images/<slug:project_image_slug>/', views.UpdateProjImgAPI.as_view()),
+    path('projects/notes/<int:id>/', views.UpdateProjNotesAPI.as_view()),
 
 ]

@@ -3,10 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="003d8e10-b072-48e2-8eb7-3c2de5ff5536" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jdwebport_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jdwebport_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_app/viewsets.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_app/viewsets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jdwebport_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/jdwebport_project/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +47,7 @@
       <recent name="C:\Users\justi\PycharmProjects\JDWebPortBE\jdwebport_project" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\justi\PycharmProjects\jdwebportbe_v2" />
       <recent name="C:\Users\justi\PycharmProjects\JDWebPortBE\jdwebport_app\template" />
     </key>
   </component>
@@ -186,7 +188,15 @@
       <workItem from="1693865147110" duration="643000" />
       <workItem from="1693966505960" duration="5062000" />
       <workItem from="1694021959019" duration="9789000" />
-      <workItem from="1694042059135" duration="11998000" />
+      <workItem from="1694042059135" duration="12567000" />
+      <workItem from="1694152491297" duration="3000" />
+      <workItem from="1694574076899" duration="2844000" />
+      <workItem from="1694720690801" duration="18389000" />
+      <workItem from="1694747571229" duration="1481000" />
+      <workItem from="1694772148112" duration="6619000" />
+      <workItem from="1694839620155" duration="2360000" />
+      <workItem from="1694976983252" duration="29207000" />
+      <workItem from="1695072667704" duration="4926000" />
     </task>
     <servers />
   </component>

@@ -172,6 +172,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # needed for restframework login
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         # 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
@@ -239,3 +243,15 @@ CORS_ALLOWED_ORIGINS = [
 # AWS_S3_SIGNATURE_VERSION = 's3v4'
 # AWS_QUERYSTRING_AUTH = False
 
+# Google Storages
+from google.oauth2 import service_account
+GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+    os.path.join(BASE_DIR, 'google_credentials.json')
+)
+
+DEFAULT_FILE_STORAGE= 'jdwebport_project.gcloud.GoogleCloudMediaFileStorage'
+GS_PROJECT_ID = env('GS_PROJECT_ID')
+GS_BUCKET_NAME = env('GS_BUCKET_NAME')
+MEDIA_ROOT = "media/"
+UPLOAD_ROOT = 'media/uploads/'
+MEDIA_URL = 'https://storage.googleapis.com/{}/'.format(GS_BUCKET_NAME)

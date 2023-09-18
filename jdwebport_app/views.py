@@ -10,27 +10,14 @@ from rest_framework import permissions
 from rest_framework.parsers import MultiPartParser
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
+from django.utils.text import slugify
+from django.db import IntegrityError
 import datetime
 
 
 # Create your views here.
 # def index(request):
 #     return render(request, 'index.html')
-
-# View sets for the restframework page
-class BiographyViewSet(viewsets.ModelViewSet):
-    queryset = Biography.objects.all()
-    serializer_class = BiographySerializer
-
-
-class ProjectViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-
-
-class ContactMeViewSet(viewsets.ModelViewSet):
-    queryset = ContactMe.objects.all()
-    serializer_class = ContactMeSerializer
 
 
 # Api endpoints to perform actions
@@ -53,26 +40,30 @@ class BiographyAPI(APIView):
         try:
             bio_query = Biography.objects.latest('id')  # we want to get the latest id in case we del id=1 row
         except Exception:
-            bio_query = Biography.objects.all()
-        serializer = BiographySerializer(bio_query)
+            return Response([], status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BiographySerializer(bio_query, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         """
         adds a new biography instance
         """
-        serializer = BiographySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if Biography.objects.count() == 0:
+            serializer = BiographySerializer(data=request.data, context={"request": request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Biography already exists. Please update or delete that one'}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
         """
         edits our current biography instance
         """
         bio_query = Biography.objects.latest('id')
-        serializer = BiographySerializer(bio_query, data=request.data, partial=True)
+        serializer = BiographySerializer(bio_query, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -96,15 +87,19 @@ class BiographySectionAPI(generics.ListCreateAPIView):
     # ONly necessary for post requests for all users
     # permission_classes = [permissions.AllowAny] we don't need this because we have our default permission.
     def create(self, request, *args, **kwargs):
-        if Biography.objects.count() >= 1:
-            request.data['biography'] = Biography.objects.all().latest('id').id
-        else:
+        if Biography.objects.count() == 0:
             return Response({'msg': "Please create a Biography instance first before creating sections"}, status=status.HTTP_200_OK)
-        serializer = BiographySectionSerializer(data=request.data)
+        serializer = BiographySectionSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = BiographySectionSerializer(queryset, many=True, context={"request":request})
+        return Response(serializer.data)
 
 
 class UpdateBiographySectionAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -119,12 +114,12 @@ class UpdateBiographySectionAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         bio_sec = self.get_queryset()
-        serializer = BiographySectionSerializer(bio_sec)
+        serializer = BiographySectionSerializer(bio_sec, context={"request": request})
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         bio_sec = self.get_queryset()
-        serializer = BiographySectionSerializer(bio_sec, data=request.data, partial=True)
+        serializer = BiographySectionSerializer(bio_sec, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -139,11 +134,11 @@ class UpdateBiographySectionAPI(generics.RetrieveUpdateDestroyAPIView):
 class BiographySectionImgAPI(APIView):
     def get(self, request):
         biography_img = BiographySectionImage.objects.all()
-        serializer = BiographySectionImgSerializer(biography_img, many=True)
+        serializer = BiographySectionImgSerializer(biography_img, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = BiographySectionImgSerializer(data=request.data)
+        serializer = BiographySectionImgSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -161,12 +156,12 @@ class UpdateBiographySectionImgAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, *args, **kwargs):
         bio_sec_img = self.get_queryset()
-        serializer = BiographySectionImgSerializer(bio_sec_img)
+        serializer = BiographySectionImgSerializer(bio_sec_img, context={"request": request})
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         bio_sec_img = self.get_queryset()
-        serializer = BiographySectionImgSerializer(bio_sec_img, data=request.data, partial=True)
+        serializer = BiographySectionImgSerializer(bio_sec_img, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -192,12 +187,19 @@ class ViewAndCreateProjectsAPI(generics.ListCreateAPIView):
 
     # we do, however, need to overwrite the create function
     def create(self, request, *args, **kwargs):
-        serializer = ProjectSerializer(data=request.data)
+        serializer = ProjectSerializer(data=request.data, context={"request": request})
         if serializer.is_valid(): # we don't need proj notes to create a proj
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        # filter_queryset helps with constructed url with optional query params
+        # e.g baseurl?project_name=power%20pet%20pro&project_owner=my%20username
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = ProjectSerializer(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
 
 
 class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -224,9 +226,9 @@ class UpdateProjectAPI(generics.RetrieveUpdateDestroyAPIView):
     # creating the update function
     def update(self, request, *args, **kwargs):
         proj_obj = self.get_queryset()
-        if request.data.get('proj_name', None):
+        if request.data.get('proj_name', None) and request.data.get('proj_slug') is None:
             # get another slug because the slug changes with the title
-            new_slug = proj_obj._get_unique_slug()
+            new_slug = slugify(request.data.get('proj_name'))
             request.data['proj_slug'] = new_slug
         serializer = ProjectSerializer(proj_obj, data=request.data, partial=True, context={'request':request}) # context may not be necessary for production
         if serializer.is_valid():
@@ -248,7 +250,7 @@ def view_all_contact_mes(request):
         * This gathers every contact me (completed or incomplete)
     """
     contact_mes = ContactMe.objects.all()
-    serializer = ContactMeSerializer(contact_mes, many=True)
+    serializer = ContactMeSerializer(contact_mes, many=True, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -267,11 +269,16 @@ class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
 
     def create(self, request, *args, **kwargs):
-        serializer = ContactMeSerializer(data=request.data)
+        serializer = ContactMeSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = ContactMeSerializer(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
 
 
 class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -292,13 +299,13 @@ class UpdateContactMeAPI(generics.RetrieveUpdateDestroyAPIView):
     # creating the retrieve function
     def retrieve(self, request, *args, **kwargs):
         contact_obj = self.get_queryset()
-        serializer = ContactMeSerializer(contact_obj)
+        serializer = ContactMeSerializer(contact_obj, context={"request": request})
         return Response(serializer.data)
 
     # creating the update function
     def update(self, request, *args, **kwargs):
         contact_obj = self.get_queryset()
-        serializer = ContactMeSerializer(contact_obj, data=request.data)
+        serializer = ContactMeSerializer(contact_obj, data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -322,7 +329,7 @@ def view_create_update_profile(request):
     """
     if request.method == 'POST' and Profile.objects.count() < 1:
         # like I said there could only be one Profile instance so we will post if the count is less than 1
-        serializers = ProfileSerializer(data=request.data)
+        serializers = ProfileSerializer(data=request.data, context={'request': request})
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_200_OK)
@@ -332,11 +339,11 @@ def view_create_update_profile(request):
     elif request.method == 'GET':
         permission_classes = [permissions.AllowAny]
         profile_query = Profile.objects.latest('id')
-        profile_serializer = ProfileSerializer(profile_query)
+        profile_serializer = ProfileSerializer(profile_query, context={'request': request})
         return Response(profile_serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         profile_query = Profile.objects.latest('id')
-        profile_serializer = ProfileSerializer(profile_query, data=request.data, partial=True)  # no full field validation check
+        profile_serializer = ProfileSerializer(profile_query, data=request.data, partial=True, context={'request': request})  # no full field validation check
         if profile_serializer.is_valid():
             profile_serializer.save()
             return Response(profile_serializer.data, status=status.HTTP_200_OK)
@@ -349,12 +356,12 @@ class UpdateSocialsProfileAPI(APIView):
     """
     def get(self, request, socials_id):
         specific_social = SocialsProfile.objects.get(id=socials_id)
-        serializer = SocialsProfileSerializer(specific_social)
+        serializer = SocialsProfileSerializer(specific_social, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, socials_id):
         specific_social = SocialsProfile.objects.get(id=socials_id)
-        serializer = SocialsProfileSerializer(specific_social, data=request.data, partial=True)
+        serializer = SocialsProfileSerializer(specific_social, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -362,7 +369,7 @@ class UpdateSocialsProfileAPI(APIView):
 
     def delete(self, request, socials_id):
         SocialsProfile.objects.get(id=socials_id).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Your social has been deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ViewAndCreateSocialsProfileAPI(APIView):
@@ -382,16 +389,19 @@ class ViewAndCreateSocialsProfileAPI(APIView):
         The serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.
             Original exception text was: 'QuerySet' object has no attribute 'social_name'.
         """
-        serializer = SocialsProfileSerializer(socials_query, many=True)
+        serializer = SocialsProfileSerializer(socials_query, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        request.data['profile'] = Profile.objects.latest('id').id
-        socials_serializer = SocialsProfileSerializer(data=request.data)
-        if socials_serializer.is_valid():
-            socials_serializer.save()
-            return Response(socials_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(socials_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            socials_serializer = SocialsProfileSerializer(data=request.data, context={"request": request})
+            if socials_serializer.is_valid():
+                socials_serializer.save()
+                return Response(socials_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(socials_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response({'profile': "Required field that needs a Hyperlink of the Profile instance"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class FullResumeAPI(APIView):
@@ -407,14 +417,14 @@ class FullResumeAPI(APIView):
             resume_query = Resume.objects.latest('id')  # we want to get the latest id in case we del id=1 row
         except Exception:
             resume_query = None
-        serializer = ResumeSerializer(resume_query)
+        serializer = ResumeSerializer(resume_query, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         if Resume.objects.count() < 1:
             # here's the issue, we can't post with a nested serializer therefore we created a sep serializer for POST req
             request.data['profile'] = Profile.objects.latest('id').id
-            serializer = POSTResumeSerializer(data=request.data)
+            serializer = POSTResumeSerializer(data=request.data, context={"request": request})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -425,7 +435,7 @@ class FullResumeAPI(APIView):
     def put(self, request):
         # we dont need a resume id or slug because there could only be ONE resume
         resume_query = Resume.objects.latest('id')
-        resume_serializer = ResumeSerializer(resume_query, data=request.data, partial=True) # similar to POST request
+        resume_serializer = ResumeSerializer(resume_query, data=request.data, partial=True, context={"request": request}) # similar to POST request
         if resume_serializer.is_valid():
             resume_serializer.save()
             return Response(resume_serializer.data, status=status.HTTP_200_OK)
@@ -443,19 +453,31 @@ class UpdateResumeProjectsAPI(generics.RetrieveUpdateDestroyAPIView): # Retrieve
     pagination_class = ResumeProjectPagination
     lookup_field = 'resume_slug'  # our pk is slug so we set it with lookup_field
 
+    # MUST TEST with get_object
+    def retrieve(self, request, *args, **kwargs):
+        # starts with queryset then uses lookup_field and match the url pattern
+        resume_project = self.get_object()
+        serializer = ResumeProjectsSerializer(resume_project, context={"request": request})
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
         # since we have one resume we could include that to streamline our post process
-        request.data['resume'] = Resume.objects.latest('id').id
         resume_project = ResumeProjects.objects.get(resume_slug=self.kwargs["resume_slug"])
-        if request.data.get('project_name', None):
+        if request.data.get('project_name', None) and request.data.get('resume_slug') is None:
             # get another slug because the slug changes with the title
-            new_slug = resume_project._get_unique_slug()
+            new_slug = slugify(request.data.get('project_name'))
             request.data['resume_slug'] = new_slug
-        resume_project_serializer = ResumeProjectsSerializer(resume_project, data=request.data, partial=True)
+        resume_project_serializer = ResumeProjectsSerializer(resume_project, data=request.data, partial=True, context={"request": request})
         if resume_project_serializer.is_valid():
             resume_project_serializer.save()
             return Response(resume_project_serializer.data, status=status.HTTP_200_OK)
         return Response(resume_project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def destroy(self, request, *args, **kwargs):
+        resume_project = self.get_object()
+        resume_project.delete()
+        return Response({'message': 'Resume project has been deleted'}, status=status.HTTP_200_OK)
 
 
 # we need to worry about getting all the resume projects and posting them
@@ -465,12 +487,16 @@ class ViewAndCreateResumeProjectsAPI(generics.ListCreateAPIView):
     pagination_class = ResumeProjectPagination
 
     def create(self, request, *args,):
-        request.data['resume'] = Resume.objects.latest('id').id
-        resume_project_serializer = ResumeProjectsSerializer(data=request.data)
+        resume_project_serializer = ResumeProjectsSerializer(data=request.data, context={"request": request})
         if resume_project_serializer.is_valid():
             resume_project_serializer.save()
             return Response(resume_project_serializer.data, status=status.HTTP_200_OK)
         return Response(resume_project_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = ResumeProjectsSerializer(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
 
 
 class UpdateResumeAwardsAndAchievementsAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -479,14 +505,25 @@ class UpdateResumeAwardsAndAchievementsAPI(generics.RetrieveUpdateDestroyAPIView
     pagination_class = ResumeAwardsAndAchievementsPagination
     lookup_field = 'id'
 
+    def retrieve(self, request, *args, **kwargs):
+        resume_awards = self.get_object()
+        serializer = ResumeAwardsAndAchievementsSerializer(resume_awards, context={"request": request})
+        return Response(serializer.data)
+
     def update(self, request, *args, **kwargs):
-        request.data['resume'] = Resume.objects.latest('id').id
         resume_awards = ResumeAwardsAndAchievements.objects.get(id=self.kwargs["id"])
-        resume_awards_serializer = ResumeAwardsAndAchievementsSerializer(resume_awards, data=request.data, partial=True)
+        resume_awards_serializer = ResumeAwardsAndAchievementsSerializer(resume_awards, data=request.data, partial=True,
+                                                                         context={"request": request})
         if resume_awards_serializer.is_valid():
             resume_awards_serializer.save()
             return Response(resume_awards_serializer.data, status=status.HTTP_200_OK)
         return Response(resume_awards_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        resume_awards = self.get_object()
+        resume_awards.delete()
+        return Response({'message': 'Resume awards and achievements deleted successfully'},
+                        status=status.HTTP_204_NO_CONTENT)
 
 
 class ViewAndCreateResumeAwardsAndAchievementsAPI(generics.ListCreateAPIView):
@@ -495,8 +532,6 @@ class ViewAndCreateResumeAwardsAndAchievementsAPI(generics.ListCreateAPIView):
     pagination_class = ResumeAwardsAndAchievementsPagination
 
     def create(self, request, *args,):
-        request.data['resume'] = Resume.objects.latest('id').id
-
         # we need to work on the duration here
         initial_date = request.data['initial_date'].split('-')
         initial_datetime = datetime.date(int(initial_date[0]), int(initial_date[1]), int(initial_date[2]))
@@ -506,22 +541,27 @@ class ViewAndCreateResumeAwardsAndAchievementsAPI(generics.ListCreateAPIView):
         time_duration = final_datetime - initial_datetime # a time delta of days (duration field is only in days
         request.data['duration'] = time_duration
 
-        resume_awards_serializer = ResumeAwardsAndAchievementsSerializer(data=request.data)
+        resume_awards_serializer = ResumeAwardsAndAchievementsSerializer(data=request.data, context={"request": request})
         if resume_awards_serializer.is_valid():
             resume_awards_serializer.save()
             return Response(resume_awards_serializer.data, status=status.HTTP_200_OK)
         return Response(resume_awards_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = ResumeAwardsAndAchievementsSerializer(queryset, many=True, context={"request": request})
+        return Response(serializer.data)
 
 
 class ViewAndCreateResumeProjectDetailsAPI(APIView):
     # Focus on creating and ALL viewing the project details
     def get(self, request):
         query = ResumeProjectDetails.objects.all()
-        serializer = ResumeProjectDetailsSerializer(query, many=True)
+        serializer = ResumeProjectDetailsSerializer(query, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        serializer = ResumeProjectDetailsSerializer(data=request.data)
+        serializer = ResumeProjectDetailsSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -533,10 +573,10 @@ def update_resume_project_details(request,resume_project_id):
     # viewing specific project detail
     query = ResumeProjectDetails.objects.get(id=resume_project_id)
     if request.method == "GET":
-        serializer = ResumeProjectDetailsSerializer(query)
+        serializer = ResumeProjectDetailsSerializer(query, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == "PUT":
-        serializer = ResumeProjectDetailsSerializer(query, data=request.data, partial=True)
+        serializer = ResumeProjectDetailsSerializer(query, data=request.data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -551,7 +591,7 @@ class ViewFeedbackQuestionAPI(APIView):
     def get(self, request, *args, **kwargs):
         try:
             latest_fb = Feedback.objects.latest('id')
-            latest_fb_question = FeedbackQuestionSerializer(latest_fb)
+            latest_fb_question = FeedbackQuestionSerializer(latest_fb, context={"request": request})
             return Response(latest_fb_question.data, status=status.HTTP_200_OK)
         except Feedback.DoesNotExist:
             default_data = {
@@ -560,7 +600,7 @@ class ViewFeedbackQuestionAPI(APIView):
             }
             new_fb_obj = Feedback.objects.create(user_email=default_data['user_email'], user_fb_desc=default_data['user_fb_desc'])
             new_fb_obj.save()
-            latest_fb_question = FeedbackQuestionSerializer(new_fb_obj)
+            latest_fb_question = FeedbackQuestionSerializer(new_fb_obj, context={"request": request})
             return Response(latest_fb_question.data, status=status.HTTP_200_OK)
 
 
@@ -569,6 +609,18 @@ class ViewAndCreateFeedbackAPI(generics.ListCreateAPIView):
     serializer_class = FeedbackSerializer
     pagination_class = ContactMeResultsSetPagination # reusing that 10 ContactMe Results for Feedback API
     permission_classes = [permissions.AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        feedback = self.filter_queryset(self.get_queryset())
+        serializer = FeedbackSerializer(feedback, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = FeedbackSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ViewAndCreateCurrProjAPI(generics.ListCreateAPIView):
@@ -583,16 +635,37 @@ class ViewAndCreateCurrProjAPI(generics.ListCreateAPIView):
         else:
            return [permissions.AllowAny()]
 
+    def list(self, request, *args, **kwargs):
+        curr_proj = self.filter_queryset(self.get_queryset())
+        serializer = CurrProjSerializer(curr_proj, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = CurrProjSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UpdateCurrProjAPI(APIView):
+    def get(self, request, *args, **kwargs):
+        curr_proj_slug = self.kwargs.get('curr_proj_slug')
+        try:
+            curr_proj = CurrProj.objects.get(curr_proj_slug=curr_proj_slug)
+            serializer = CurrProjSerializer(curr_proj, many=False, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except CurrProj.DoesNotExist:
+            return Response([], status=status.HTTP_404_NOT_FOUND)
+
     def put(self, request, *args, **kwargs):
         curr_proj_slug = self.kwargs.get('curr_proj_slug')
         curr_proj = CurrProj.objects.get(curr_proj_slug=curr_proj_slug)
-        if request.data.get('focus_title', None):
+        if request.data.get('focus_title', None) and not request.data.get('curr_proj_slug'):
             # get another slug because the slug changes with the title
-            new_slug = curr_proj._get_unique_slug()
+            new_slug = slugify(request.data.get('focus_title'))
             request.data['curr_proj_slug'] = new_slug
-        serializers = CurrProjSerializer(curr_proj, data=request.data, partial=True)
+        serializers = CurrProjSerializer(curr_proj, data=request.data, partial=True, context={"request": request})
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_200_OK)
@@ -610,11 +683,11 @@ class ViewAndCreateProjNotesAPI(APIView):
 
     def get(self, request):
         proj_notes_query = ProjectNotes.objects.all()
-        serializer = ProjectNotesSerializer(proj_notes_query, many=True)    # Dont forget many=True
+        serializer = ProjectNotesSerializer(proj_notes_query, many=True, context={"request": request})    # Dont forget many=True
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        serializer = ProjectNotesSerializer(data=request.data)
+        serializer = ProjectNotesSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -624,7 +697,26 @@ class ViewAndCreateProjNotesAPI(APIView):
 class UpdateProjNotesAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = ProjectNotes.objects.all()
     serializer_class = ProjectNotesSerializer
-    lookup_field = 'proj_notes_id'
+    lookup_field = 'id'
+
+    def retrieve(self, request, *args, **kwargs):
+        # like i said we could use .get_object which uses our queryset and lookup_field to find that url
+        proj_notes = self.get_object()
+        serializer = ProjectNotesSerializer(proj_notes, context={"request": request})
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        proj_notes = self.get_object()
+        serializer = ProjectNotesSerializer(proj_notes, data=request.data, partial=True, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        proj_notes = self.get_object()
+        proj_notes.delete()
+        return Response({'message': 'Project notes have been deleted'}, status=status.HTTP_200_OK)
 
 
 class ViewAndCreateProjImgAPI(APIView):
@@ -636,7 +728,7 @@ class ViewAndCreateProjImgAPI(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
-        serializer = ProjectImgSerializer(data=request.data, context={"request": request}) # context may not be necessary for production
+        serializer = ProjectImgSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -647,7 +739,7 @@ class UpdateProjImgAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def _get_project_image(self, request, *args, **kwargs):
         slug = self.kwargs.get('project_image_slug')
-        proj_img_obj = ProjectImage.objects.get(slug=slug)
+        proj_img_obj = ProjectImage.objects.get(project_image_slug=slug)
         return proj_img_obj
 
     def retrieve(self, request, *args, **kwargs):

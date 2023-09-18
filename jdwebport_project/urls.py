@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from jdwebport_app.views import BiographyViewSet, ProjectViewSet, ContactMeViewSet
+from jdwebport_app.viewsets import *
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -26,9 +26,28 @@ from django.conf.urls.static import static
 
 # using default router urls
 router = routers.DefaultRouter()
-router.register('biography', BiographyViewSet)
-router.register('project', ProjectViewSet)
-router.register('contactme', ContactMeViewSet)
+router_viewsets = {
+    'Biography': BiographyViewSet,
+    'Projects': ProjectViewSet,
+    'Contact Me': ContactMeViewSet,
+    'Profile': ProfileViewSet,
+    'Socials Profile': SocialsProfileViewSet,
+    'Biography Sections': BiographySectionViewSet,
+    'Biography Sections Images': BiographySectionImageViewSet,
+    'Current Projects': CurrProjViewSet,
+    'Feedback': FeedbackViewSet,
+    'Resume': ResumeViewSet,
+    'Resume Projects': ResumeProjectsViewSet,
+    'Resume Project Details': ResumeProjectDetailsViewSet,
+    'Resume Awards and Achievements': ResumeAwardsAndAchievementsViewSet,
+    'Project Notes': ProjectNotesViewSet,
+    'Project Images': ProjectImageViewSet,
+
+}
+
+for set in router_viewsets.items():
+    router.register(set[0], set[1])
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
