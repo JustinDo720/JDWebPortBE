@@ -17,6 +17,7 @@ import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_URL = 'http://localhost:8000'
 
 # building environment var
 env = environ.Env()
@@ -39,6 +40,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'jdwebportbe-env.eba-fm8z8psd.us-east-1.elasticbeanstalk.com',
+    'hello-ghpog7gtqq-uc.a.run.app',
     'localhost',
     '127.0.0.1'
 ]
@@ -80,7 +82,7 @@ ROOT_URLCONF = 'jdwebport_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'jdwebport_app' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,6 +106,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_NAME_TESTING'),
+        # 'HOST': env('DB_HOST_TESTING'),
         'HOST': env('DB_HOST_TESTING'),
         'USER': env('DB_USER_TESTING'),
         'PASSWORD': env('DB_PASSWORD_TESTING'),

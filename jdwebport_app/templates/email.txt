@@ -1,0 +1,8 @@
+Hello!
+
+I'm Justin's email bot, and I'm here to let you know that your message has been received. I'll get back to you as soon as possible! Thank you for getting in touch with me.
+
+If you have any questions or need further assistance, please wait until I respond as this is only a bot.
+
+Best regards,
+Justin's Team

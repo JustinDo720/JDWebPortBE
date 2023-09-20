@@ -1,0 +1,35 @@
+{% if email and first_name is None and last_name is None %}
+    Greetings <strong>{{ email }}</strong>!
+{% elif first_name and last_name and email is None %}
+    Greetings <strong>{{ first_name }} {{ last_name }}</strong>!
+{% elif first_name and last_name is None %}
+    Greetings <strong>{{ first_name }}</strong>!
+{% elif last_name and first_name is None %}
+    Greetings <strong>{{ last_name }}</strong>!
+{% endif %}
+<br>
+
+<p>
+    I'm Justin's email bot, and I'm here to let you know that your message has been received. I'll get back to you as soon as possible!
+</p>
+
+<br>
+{% if purpose == 'connect' %}
+    <p>
+        Thank you for <strong>connecting with me</strong>! I appreciate your interest in connecting, and I look forward to getting to know you better through the information that you've provided.
+    </p>
+{% elif purpose == 'job_opp' %}
+    <p>
+        Thank you for <strong>providing a job opportunity</strong>! I'm excited to learn more about the opportunity you have in mind. I will contact you if I have any further questions.
+    </p>
+{% elif purpose == 'feedback' %}
+    <p>
+        Thank you for <strong>providing feedback</strong>! Your input is valuable, and I appreciate you taking the time to share your thoughts. Your feedback helps me improve and progress. I look forward to examining your specific feedback :D
+    </p>
+{% endif %}
+
+<br>
+<p>
+    Best regards,<br>
+    Justin Do
+</p>

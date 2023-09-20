@@ -1,26 +1,32 @@
 from django.shortcuts import render
-from rest_framework import viewsets, status
+from jdwebport_project import settings
+from rest_framework import status
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from .pagination import ProjectResultsSetPagination, ContactMeResultsSetPagination, ResumeProjectPagination, ResumeAwardsAndAchievementsPagination
 from rest_framework import permissions
 from rest_framework.parsers import MultiPartParser
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import Http404
+import environ
+import os
+import zipfile
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.template import Context
+from google.cloud import storage
+from django.http import Http404, FileResponse
 from django.utils.text import slugify
 from django.db import IntegrityError
 import datetime
 
-
-# Create your views here.
-# def index(request):
-#     return render(request, 'index.html')
-
+# building environment var
+env = environ.Env()
+environ.Env.read_env()
 
 # Api endpoints to perform actions
+
 
 class BiographyAPI(APIView):
     """
@@ -272,6 +278,54 @@ class ViewAndCreateContactMesAPI(generics.ListCreateAPIView):
         serializer = ContactMeSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
+            # after saving the serialzier we want to send an email to our contacters
+            # Note that "connect" is the default user purpose therefore we will set the default sub and msg for connect
+
+            email_context = {
+                'email': request.data.get('user_email'),
+                'first_name' : request.data.get('user_first_name'),
+                'last_name': request.data.get('user_last_name'),
+                'purpose': request.data.get('user_purpose'),
+            }
+
+            mail_details = {
+                "subject": "Connecting with Justin",
+                "msg_plain": render_to_string('email.txt'),
+                "msg_html": render_to_string('email.html', context=email_context),
+                "sender": env('EMAIL_HOST_USER'),
+            }
+
+            if email_context['purpose'] == 'job_opp':
+                mail_details['subject'] = "Job Opportunity for Justin"
+            elif email_context['purpose'] == 'feedback':
+                mail_details['subject'] = "Feedback for Justin"
+
+            send_mail(
+                mail_details['subject'],
+                mail_details['msg_plain'],
+                mail_details['sender'],
+                [request.data.get('user_email')],
+                fail_silently=True,
+                html_message=mail_details['msg_html']
+            )
+
+            personal_context = {
+                'email': request.data.get('user_email'),
+                'inquiry': request.data.get('user_inquiry'),
+                'url': serializer.data.get('contact_me_url')
+            }
+
+
+            # now lets email me some things
+            send_mail(
+                mail_details['subject'],
+                render_to_string('personal_email.txt'),
+                mail_details['sender'],
+                [env('RECIPIENT_ADDRESS'), env('ADDITIONAL_RECIPIENT_ADDRESS')],
+                fail_silently=True,
+                html_message=render_to_string('personal_email.html', context=personal_context)
+            )
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -385,7 +439,7 @@ class ViewAndCreateSocialsProfileAPI(APIView):
 
         """
         Note: make sure to set many on our serializer to handle multiple instances or else you'll get the error below
-        
+
         The serializer field might be named incorrectly and not match any attribute or key on the `QuerySet` instance.
             Original exception text was: 'QuerySet' object has no attribute 'social_name'.
         """
@@ -584,6 +638,66 @@ def update_resume_project_details(request,resume_project_id):
     elif request.method == "DELETE":
         query.delete()
         return Response({'msg': f"Removed Details for: {query.resume_project.project_name}"}) # flag worthy
+
+@api_view(['POST'])
+@parser_classes([MultiPartParser])
+def upload_resume(request):
+    if Resume.objects.count() > 0:
+        request.data['resume'] = Resume.objects.latest('id').id
+    serializer = ResumeFileSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "File uploaded successfully"})
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def download_resume(request):
+    # since we only have one resume
+    try:
+        resume = Resume.objects.latest('id')
+        # get all resume files that deal with our resume instance
+        all_resume_files = resume.resume_file.all()
+
+        # GCS credentials
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(settings.BASE_DIR, 'google_credentials.json')
+        # GCS access
+        bucket_name = env('GS_BUCKET_NAME')
+        object_names = [file.resume_file.file.name for file in all_resume_files]
+
+        # init GCS client
+        client = storage.Client()
+
+        files = []
+        for object_name in object_names:
+            bucket = client.bucket(bucket_name)
+            blob = bucket.blob(object_name)
+            if blob.exists():
+                files.append((blob.download_as_bytes(), os.path.basename(object_name)))
+            else:
+                # Handle the case where the object does not exist
+                print(f"Object '{object_name}' does not exist in the GCS bucket.")
+
+        temp_zip_name = 'temp.zip'
+
+        with zipfile.ZipFile(temp_zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for file_data, file_name in files:
+                zipf.writestr(file_name, file_data)
+
+        # must have an open file!!!
+        response = FileResponse(open(temp_zip_name, 'rb'), content_type='application/zip')
+        if resume.profile.full_name.split(' '):
+            zip_filename = f'{resume.profile.full_name.split(" ")[0]}_{resume.profile.full_name.split(" ")[1]}_resumes.zip'
+        else:
+            zip_filename = f'justin_do_resumes.zip'
+        response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
+        response['Accept-Ranges'] = 'bytes' # not necessary but supports us reading bytes
+        return response
+
+    except Resume.DoesNotExist:
+        return Response({"message": "Please make a Resume Instance before adding files"})
+    except Exception as e:
+        return Response({"message": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ViewFeedbackQuestionAPI(APIView):

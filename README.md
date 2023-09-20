@@ -76,7 +76,10 @@
     - [x] Resume Viewset (Resume, ResumeProjects, ResumeProjectDetails, ResumeAwardsandAchievement)
     - [x] Feedback Viewset (Contact Me, Feedback)
   - [x] Test API endpoints (we need to pass request in context for serializer)
-  - [ ] Reconfigure new Database
-  - [x] Storage for Pictures (maybe use Google Cloud Storage again) 
+  - [x] Reconfigure new Database 
+    - [x] ElephantSQL
+  - [x] Storage for Pictures
+    - [x] Google Cloud Storage
   - [ ] I heard we could deploy with Google check that
+    - [ ] Cloud Run with Docker or Figure out App Engine File limitations
   

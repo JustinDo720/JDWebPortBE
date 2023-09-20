@@ -2,12 +2,12 @@ from django.db import models
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
-# Create your models here.
+#Create your models here.
 
 """
 Safely delete migrations rules:
 1) Make sure to makemigrations before this process and be sure that all fixes are in the migrations file
-2) Run "python manage.py migrate app_name zero" --> unapply all migrations 
+2) Run "python manage.py migrate app_name zero" --> unapply all migrations
 3) Remove pycache from /migrations/__pycache__/ (the pyc that correlates to the migrations you want to delete)
 4) Remove the python files from /migrations/ (the py that correlates to the migrations you want to delete)
 """
@@ -333,6 +333,17 @@ class ResumeAwardsAndAchievements(models.Model):
         return self.award_achievement_name
 
 
+class ResumeFile(models.Model):
+    resume = models.ForeignKey(Resume, related_name="resume_file", on_delete=models.CASCADE)
+    resume_file = models.FileField(upload_to='resume_files/')
+
+    def __str__(self):
+        if self.resume.profile:
+            return f"{self.resume.profile.full_name}'s {self.resume_file.name}"
+        else:
+            return f"{self.resume_file.name}"
+
+
 class ProjectNotes(models.Model):
     # all possible notes for both our Projects and Resume Projects
     init_notes = models.TextField(max_length=500, blank=True, null=True)
@@ -341,10 +352,10 @@ class ProjectNotes(models.Model):
 
     """
         # two different foreign keys with blanks as possible values for us to choose which model to link it to
-        
-        NOTE: none of these fields are required which allows us to POST something blank but we'll take care of that 
-        in our serializers to make sure that at least project or resume project is filled  for us to 
-        know which notes this instance belongs to 
+
+        NOTE: none of these fields are required which allows us to POST something blank but we'll take care of that
+        in our serializers to make sure that at least project or resume project is filled  for us to
+        know which notes this instance belongs to
     """
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="proj_notes",blank=True, null=True)
     resume_project = models.ForeignKey(ResumeProjects, on_delete=models.CASCADE, related_name="resume_proj_notes", blank=True, null=True)

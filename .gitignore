@@ -7,6 +7,9 @@ db.sqlite3
 .env
 /media/
 
+# testing zip files
+temp.zip
+
 # Elastic Beanstalk Files
 .ebextensions
 .elasticbeanstalk/*
@@ -15,3 +18,8 @@ db.sqlite3
 
 # Google Cloud Files
 google_credentials.json
+
+# Docker items
+Dockerfile
+.dockerignore
+app.yaml

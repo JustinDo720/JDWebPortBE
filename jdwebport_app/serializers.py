@@ -291,6 +291,12 @@ class POSTResumeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ResumeFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResumeFile
+        fields = '__all__'
+
+
 class ResumeProjectDetailsSerializer(serializers.HyperlinkedModelSerializer):
     resume_project_details_url = serializers.HyperlinkedIdentityField(view_name='resumeprojectdetails-detail')
 
